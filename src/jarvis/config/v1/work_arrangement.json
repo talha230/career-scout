@@ -1,0 +1,97 @@
+{
+  "_meta": {
+    "purpose": "Deciding whether a posting is remote, onsite or a project (freelance/contract) engagement — T031a.",
+    "version": "0.1.0",
+    "why_this_is_config": "Same reason role_families.json is config: these patterns decide which opportunities a user sees, and they must be editable and versioned without a Python change. An assessment records the config version it ran under, so a pattern added later never silently rewrites an old decision.",
+
+    "three_values_only": "The opportunity table permits remote, onsite and project. There is deliberately no 'hybrid' value: a hybrid role requires the candidate to be physically present in the employer's city on some days, so for every downstream question that matters — cost of living, tax residence, relocation, visa — it behaves exactly like onsite. The hybrid signal is still reported in `evidence` so the distinction is not lost, it just does not get its own bucket.",
+
+    "unknown_stays_null": "A posting whose arrangement cannot be read is NULL, not onsite. Defaulting to onsite would be an invented fact about a job nobody read, and onsite is the value that drives relocation and cost-of-living arithmetic — the most expensive place to be wrong.",
+
+    "precedence": "project beats remote beats onsite. A freelance contract delivered remotely is a project engagement first: how the person is engaged and paid changes tax, invoicing and whether there is a salary at all, and that matters more than where the work happens. `remote` is still recorded in evidence when both fire.",
+
+    "false_positive_note": "The single biggest risk here is the word 'contract'. It is ordinary vocabulary in the domains this candidate works in — 'contract manufacturing', 'contract negotiation', 'contract management', 'under contract' — so a bare 'contract' match would misclassify a large share of genuine permanent supply-chain and manufacturing roles as freelance. Every project pattern below therefore requires the word to sit in a phrase that names the ENGAGEMENT, never the word alone."
+  },
+
+  "project": {
+    "label": "Project / freelance engagement",
+    "title_patterns": [
+      "\\bfreelance\\b",
+      "\\bfreelancer\\b",
+      "\\bindependent contractor\\b",
+      "\\bcontract(or)?\\s*[-–—]\\s*\\d+\\s*(month|week|year)",
+      "\\(\\s*contract\\s*\\)",
+      "\\[\\s*contract\\s*\\]"
+    ],
+    "body_patterns": [
+      "\\bfreelance\\b",
+      "\\bindependent contractor\\b",
+      "\\bon a (freelance|contract|consultancy) basis\\b",
+      "\\bcontract(-| )based (role|position|engagement|work)\\b",
+      "\\bproject[- ]based (engagement|contract|work|role)\\b",
+      "\\bstatement of work\\b",
+      "\\bb2b contract\\b",
+      "\\b1099\\b",
+      "\\bself[- ]employed\\b",
+      "\\bday rate\\b",
+      "\\bfixed[- ]price (project|engagement)\\b"
+    ],
+    "structured_values": [
+      "freelance", "contract", "contractor", "temporary", "gig",
+      "self-employed", "b2b", "project"
+    ],
+    "structured_note": "Matched against a source's OWN employment-type field where it publishes one (Arbeitnow's `job_types`, a board's `employment_type`). A structured field is a statement by the employer and is far safer than reading prose, so it is checked first."
+  },
+
+  "remote": {
+    "label": "Remote",
+    "title_patterns": [
+      "\\bremote\\b",
+      "\\bwork from home\\b",
+      "\\bwfh\\b",
+      "\\b100% remote\\b",
+      "\\bfully remote\\b"
+    ],
+    "body_patterns": [
+      "\\bfully remote\\b",
+      "\\b100% remote\\b",
+      "\\bremote[- ](first|friendly|role|position|work)\\b",
+      "\\bwork from (home|anywhere)\\b",
+      "\\bwork from home\\b",
+      "\\btelecommut(e|ing)\\b",
+      "\\bdistributed team\\b",
+      "\\banywhere in the world\\b"
+    ],
+    "structured_values": ["remote", "fully remote", "work from home", "telecommute"],
+    "negations": [
+      "\\bno remote\\b",
+      "\\bnot a remote (role|position)\\b",
+      "\\bremote work is not (available|offered|possible)\\b",
+      "\\bthis (role|position) is not remote\\b",
+      "\\bon[- ]?site only\\b",
+      "\\bno work from home\\b"
+    ],
+    "negation_note": "An explicit refusal beats a mention, the same rule detect_visa_signal uses. A posting that says 'this role is not remote' contains the word 'remote' and must not be filed as one."
+  },
+
+  "onsite": {
+    "label": "On site",
+    "title_patterns": [
+      "\\bon[- ]?site\\b"
+    ],
+    "body_patterns": [
+      "\\bon[- ]?site only\\b",
+      "\\bfully on[- ]?site\\b",
+      "\\bin[- ]office\\b",
+      "\\bmust be (based|located) in\\b",
+      "\\brelocation (is )?required\\b"
+    ],
+    "structured_values": ["onsite", "on-site", "on site", "in office", "in-office"],
+    "hybrid_patterns": [
+      "\\bhybrid\\b",
+      "\\b\\d+ days? (a|per) week in (the )?office\\b",
+      "\\bpartially remote\\b"
+    ],
+    "hybrid_note": "A hybrid match resolves to onsite, for the reason in _meta.three_values_only, and records 'hybrid' in its evidence."
+  }
+}

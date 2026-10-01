@@ -1,0 +1,23 @@
+{
+  "_meta": {
+    "purpose": "Interview practice rubric and STAR markers — T090, ported from src/jobfinder/phase6/interview_sim.py.",
+    "version": "0.1.0",
+    "scoring_note": "Scores are computed from the user's own typed answers only. No model answer is generated, and nothing is scored that the user did not write. The rubric is applied identically to every answer, so a score can be recomputed by hand.",
+    "ported_changes": "The legacy tool list was one engineer's toolbox; named tools now come from the skill vocabulary. The legacy relocation prompt asserted one person's passport expiry and degree accreditation as literals; prompts now state no fact about the user."
+  },
+  "rubric": {
+    "structure":   { "weight": 0.30, "description": "How many of Situation, Task, Action and Result are present.", "formula": "100 * (STAR elements detected / 4)" },
+    "specificity": { "weight": 0.30, "description": "Concrete detail: numbers, named tools or methods, timeframes.", "formula": "100 * min(1, (numbers + named_tools + timeframes) / 4)" },
+    "relevance":   { "weight": 0.25, "description": "Uses skills the posting asked for.", "formula": "100 * min(1, posting_skills_mentioned / 3)" },
+    "length":      { "weight": 0.15, "description": "A usable spoken answer is roughly 90-250 words.", "formula": "100 inside the band; scaled down outside it" }
+  },
+  "length_band": { "min_words": 90, "max_words": 250, "long_penalty_per_word": 0.2, "long_floor": 40 },
+  "star_markers": {
+    "situation": ["\\bwhen i\\b", "\\bat the time\\b", "\\bthe (problem|issue|situation) was\\b", "\\bwe were\\b", "\\bthe (plant|line|department|factory|team|company) was\\b", "\\bbefore\\b"],
+    "task": ["\\bi was (asked|responsible|tasked|assigned)\\b", "\\bmy (job|role|task|goal) was\\b", "\\bi needed to\\b", "\\bi had to\\b", "\\bthe target was\\b"],
+    "action": ["\\bi (did|ran|led|built|implemented|analysed|analyzed|introduced|designed|measured|trained|redesigned|standardis|standardiz)", "\\bi started by\\b", "\\bfirst,? i\\b", "\\bso i\\b"],
+    "result": ["\\bas a result\\b", "\\bthis (reduced|increased|improved|saved|cut)\\b", "\\bwe (achieved|reached|hit|delivered)\\b", "\\bwent from\\b", "\\bended up\\b", "\\d+\\s*%"]
+  },
+  "timeframe_pattern": "\\b(\\d+\\s*(week|month|year|day|shift)s?|q[1-4]|20\\d{2}|within \\w+)\\b",
+  "questions": { "matched_skills": 3, "gap_skills": 2 }
+}

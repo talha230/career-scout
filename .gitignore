@@ -1,0 +1,20 @@
+# Jarvis local data never enters the repository
+.jarvis/
+.jarvis-demo/
+secrets/
+*.token.json
+google_client_secret.json
+
+# Build and tool output
+dashboard/node_modules/
+build/
+dist/
+*.egg-info/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+Thumbs.db
+.DS_Store

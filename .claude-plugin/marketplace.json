@@ -1,0 +1,15 @@
+{
+  "name": "jarvis-plugin",
+  "description": "Jarvis: a local-first job and scholarship agent that runs on your own machine.",
+  "owner": {
+    "name": "Muhammad Talha Yaqoob",
+    "url": "https://github.com/talha230"
+  },
+  "plugins": [
+    {
+      "name": "jarvis",
+      "source": "./plugins/jarvis",
+      "description": "Find jobs and scholarships, score them with checkable arithmetic, write CVs that only cite your confirmed profile, and send from your own Gmail after you approve."
+    }
+  ]
+}

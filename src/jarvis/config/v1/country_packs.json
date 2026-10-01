@@ -1,0 +1,154 @@
+{
+ "_meta": {
+  "purpose": "One pack per country the pipeline may search. A pack is the whole country-specific decision: whether it is searched at all, which registered sources serve it, and what its default savings floor is together with where that figure came from.",
+  "version": "1.0.0",
+  "self_contained_rule": "A pack names only its own country. Nothing in one pack reads another, and enabling a pack must leave every other country's stored output byte-identical (T028). That is why sources are named per pack rather than inherited from a global default that shifts when a pack is added.",
+  "enablement_vs_resolution": [
+   "Enabling a country decides what is SEARCHED. It does not decide what can be",
+   "READ: location resolution knows all 45 countries in country_preferences.json",
+   "either way, so a posting whose location resolves to a disabled country is",
+   "still resolved correctly and simply never fetched. Conflating the two would",
+   "make a posting's stored country depend on which packs happen to be on."
+  ],
+  "floors_are_unsourced_on_purpose": [
+   "Every pack below ships default_savings_floor: null. Not one of these five",
+   "countries has a sourced monthly savings floor yet, and writing a plausible",
+   "number here would be exactly the fabrication the whole design refuses —",
+   "these figures decide whether an opportunity reaches a shortlist.",
+   "Resolution (T041) then does two different things, both correct: PK is on",
+   "countries_requiring_own_floor and reports 'UNSCORED — default not yet",
+   "sourced', while the others fall through to the global USD 2,000 fallback and",
+   "say 'fallback' as their floor_source, so nothing claims to be local data.",
+   "U1 in PLAN.md §11 is the task of sourcing the PK figure with its basis."
+  ]
+ },
+ "packs": [
+  {
+   "code": "PK",
+   "name": "Pakistan",
+   "enabled": true,
+   "currency": "PKR",
+   "default_savings_floor": null,
+   "floor_basis": null,
+   "floor_source_url": null,
+   "floor_as_of": null,
+   "floor_note": "Stays null. Applying the global USD 2,000 fallback to Pakistan produces a permanently empty shortlist, and inventing a replacement is a fabricated number. See U1.",
+   "sources": [
+    "remoteok",
+    "himalayas",
+    "jobicy"
+   ],
+   "source_note": "No Pakistan-specific board in the registry returned a usable feed on the 2026-08-08 probe. The corpus holds 10 PK postings out of 4,402, all from worldwide-remote sources. A PK-specific source is outstanding work (U2), and until one exists this pack says so rather than implying coverage it does not have."
+  },
+  {
+   "code": "US",
+   "name": "United States",
+   "enabled": true,
+   "currency": "USD",
+   "default_savings_floor": null,
+   "floor_basis": null,
+   "floor_source_url": null,
+   "floor_as_of": null,
+   "sources": [
+    "greenhouse",
+    "lever",
+    "remoteok",
+    "himalayas",
+    "jobicy"
+   ],
+   "source_note": "13 of the 14 probed Greenhouse boards and 2 of 3 Lever boards are US-headquartered, which is why the corpus is 1,891 US postings out of 4,402. That is a property of the source list, not of the market."
+  },
+  {
+   "code": "GB",
+   "name": "United Kingdom",
+   "enabled": true,
+   "currency": "GBP",
+   "default_savings_floor": null,
+   "floor_basis": null,
+   "floor_source_url": null,
+   "floor_as_of": null,
+   "sources": [
+    "greenhouse",
+    "lever",
+    "remoteok",
+    "himalayas",
+    "jobicy"
+   ],
+   "source_note": "No GB-headquartered board is registered; GB postings arrive as UK offices of employers on the boards above. 263 in the corpus."
+  },
+  {
+   "code": "DE",
+   "name": "Germany",
+   "enabled": true,
+   "currency": "EUR",
+   "default_savings_floor": null,
+   "floor_basis": null,
+   "floor_source_url": null,
+   "floor_as_of": null,
+   "sources": [
+    "arbeitnow",
+    "greenhouse",
+    "remoteok",
+    "himalayas",
+    "jobicy"
+   ],
+   "source_note": "arbeitnow is Germany-weighted and is the only country-specific aggregator in the registry. 283 DE postings in the corpus. 148 of the 4,402 postings demand German, which eligibility compares against the user's own confirmed languages."
+  },
+  {
+   "code": "AU",
+   "name": "Australia",
+   "enabled": true,
+   "currency": "AUD",
+   "default_savings_floor": null,
+   "floor_basis": null,
+   "floor_source_url": null,
+   "floor_as_of": null,
+   "sources": [
+    "greenhouse",
+    "lever",
+    "remoteok",
+    "himalayas",
+    "jobicy"
+   ],
+   "source_note": "Thinnest of the five: 60 postings in the corpus, all Australian offices of employers on US-headquartered boards. An AU-specific source is outstanding (U2)."
+  },
+  {
+   "code": "IT",
+   "name": "Italy",
+   "enabled": false,
+   "currency": "EUR",
+   "default_savings_floor": null,
+   "floor_basis": null,
+   "floor_source_url": null,
+   "floor_as_of": null,
+   "sources": [],
+   "disabled_reason": "Registered and off. Present so enabling a sixth country is a flag rather than a code change, and so T028 has a real pack to switch on when it asserts the other five stay byte-identical."
+  },
+  {
+   "code": "DK",
+   "name": "Denmark",
+   "enabled": false,
+   "currency": "DKK",
+   "default_savings_floor": null,
+   "floor_basis": null,
+   "floor_source_url": null,
+   "floor_as_of": null,
+   "sources": [],
+   "disabled_reason": "Registered and off, as above."
+  },
+  {
+   "code": "SE",
+   "name": "Sweden",
+   "enabled": false,
+   "currency": "SEK",
+   "default_savings_floor": null,
+   "floor_basis": null,
+   "floor_source_url": null,
+   "floor_as_of": null,
+   "sources": [
+    "lever"
+   ],
+   "disabled_reason": "Registered and off, although one probed Lever board is Sweden-headquartered. Its postings arrive today only when another enabled pack names the same provider, which is a property worth seeing rather than hiding: a provider is shared, a pack is not."
+  }
+ ]
+}

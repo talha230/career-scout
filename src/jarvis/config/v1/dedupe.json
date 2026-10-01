@@ -1,0 +1,18 @@
+{
+  "_meta": {
+    "purpose": "Deciding when two postings are the same vacancy — T030b.",
+    "version": "0.1.0",
+    "why_config": "The title threshold below is a threshold, and I-23 says thresholds are never code constants. It also changes which vacancies a user sees: too low and real jobs disappear behind each other, too high and the same job is applied to twice.",
+    "merge_not_delete": "A duplicate is marked non-canonical and pointed at the canonical row. Nothing is deleted, and every merge writes an opportunity_duplicate row naming the rule, the similarity and the evidence."
+  },
+
+  "title_similarity_threshold": 0.93,
+  "title_similarity_basis": "MEASURED on the legacy corpus. At 0.88 'Business Operations Analyst' merged with 'Strategy & Business Operations Analyst', which are different jobs with different scopes. 0.93 keeps those apart while still merging genuine re-posts of one title.",
+
+  "city_similarity_threshold": 0.85,
+  "city_similarity_basis": "Tolerates 'Munich' vs 'München' and 'NYC' vs 'New York City' without merging two genuinely different offices in one country.",
+
+  "no_url_similarity_threshold": "DELIBERATELY ABSENT. Fuzzy comparison of URLs is unsound here: two unrelated postings on one board differ only in a numeric id and score 0.92-0.97 against each other, which is above any useful cut-off. URL matching is exact-after-canonicalisation only.",
+
+  "same_place_rule": "Two postings are in the same place if their countries agree, or if both are remote. An unresolved country is NOT a match — guessing that two unknowns are the same place is exactly the invented equivalence that produces wrong merges. 715 postings in the corpus have no country at all, so this is not a rare branch."
+}

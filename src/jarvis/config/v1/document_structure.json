@@ -1,0 +1,77 @@
+{
+  "_meta": {
+    "purpose": "Structure of generated CVs and cover letters.",
+    "version": "0.1.0",
+    "spec_note": "The original spec's section 15 (cover letter structure) and section 24 (QC agent) were not supplied. The five-part structure below is DERIVED from standard cover-letter practice. Edit freely.",
+    "hard_rule": "Every generated block must carry a source_ref pointing into data/master_cv.json. A block with no source_ref is a fabrication by definition and the QC agent fails the document."
+  },
+
+  "cover_letter": {
+    "parts": [
+      { "id": "P1_opening", "label": "Opening - who you are and what you are applying for",
+        "must_contain": ["job title from the posting", "company name from the posting", "candidate's current professional identity"],
+        "may_not_contain": ["achievement figures", "claims about the company beyond what the posting says"],
+        "max_sentences": 3 },
+      { "id": "P2_why_this_role", "label": "Why this role - the match",
+        "must_contain": ["at least two skills that Phase 3 matched between the posting and the master CV"],
+        "may_not_contain": ["skills the candidate does not have"],
+        "max_sentences": 4 },
+      { "id": "P3_evidence", "label": "Evidence - a concrete achievement",
+        "must_contain": ["at least one achievement drawn from x_achievements with usable_in_applications = true"],
+        "may_not_contain": ["any achievement with usable_in_applications = false", "any figure not present in the master CV"],
+        "max_sentences": 4 },
+      { "id": "P4_fit_and_gaps", "label": "Fit - transferable skills and honest positioning",
+        "must_contain": ["either a transferable-skill bridge from the skill gap, or a statement of relevant domain experience"],
+        "may_not_contain": ["a claim to a skill listed as missing"],
+        "max_sentences": 3 },
+      { "id": "P5_close", "label": "Close - availability and next step",
+        "must_contain": ["a clear next step"],
+        "may_not_contain": ["a start date, notice period or salary figure that is not recorded in x_preferences"],
+        "max_sentences": 2 }
+    ]
+  },
+
+  "motivation_letter": {
+    "parts": [
+      { "id": "P1_opening", "label": "Opening - the programme, from the posting" },
+      { "id": "P2_academic_record", "label": "Academic record - your confirmed qualification" },
+      { "id": "P3_direction", "label": "Direction - your own summary of what you do" },
+      { "id": "P4_evidence", "label": "Evidence - a confirmed achievement or role" },
+      { "id": "P5_close", "label": "Close - a next step and your contact details" }
+    ]
+  },
+
+  "cv": {
+    "sections": ["header", "summary", "key_skills", "experience", "education", "certifications", "projects", "languages"],
+    "tailoring_rules": [
+      "Reorder work highlights so those matching the posting's required skills appear first. Never reword a highlight to include a skill it did not already demonstrate.",
+      "Select at most max_highlights_per_role highlights per role, dropping the least relevant. Dropping is allowed; inventing is not.",
+      "Order key_skills by whether the posting asked for them.",
+      "The summary is assembled from master CV sentences only. It is not rewritten for each job."
+    ],
+    "max_highlights_per_role": 6,
+    "max_skills_shown": 18
+  },
+
+  "qc": {
+    "checks": [
+      { "id": "QC1_untraceable_block", "severity": "FAIL",
+        "description": "A block with no source_ref, or a source_ref that does not resolve to a path in master_cv.json." },
+      { "id": "QC2_blocked_achievement", "severity": "FAIL",
+        "description": "Uses an achievement whose usable_in_applications is false." },
+      { "id": "QC3_unknown_number", "severity": "FAIL",
+        "description": "Contains a numeric claim that does not appear anywhere in master_cv.json. This is the main fabrication detector - invented metrics are the highest-risk failure mode." },
+      { "id": "QC4_unsupported_skill", "severity": "FAIL",
+        "description": "Claims a skill that is not in the master CV's skill keywords." },
+      { "id": "QC5_placeholder_text", "severity": "FAIL",
+        "description": "Contains template placeholder text." },
+      { "id": "QC6_unverified_claim", "severity": "WARN",
+        "description": "Uses a claim whose master record has verified = false. Allowed - a CV is self-reported by nature - but reported so it is never invisible." },
+      { "id": "QC7_stale_employment_claim", "severity": "WARN",
+        "description": "States or implies current employment while master_cv marks the end date UNCONFIRMED." },
+      { "id": "QC8_missing_required_part", "severity": "FAIL",
+        "description": "A cover letter part defined above is absent or empty." }
+    ],
+    "numeric_tolerance_note": "QC3 compares numerals found in generated text against every numeral present in master_cv.json. Years, counts and percentages that appear in the posting rather than the master CV are also allowed, since quoting the employer's own requirement back is not a claim about the candidate."
+  }
+}

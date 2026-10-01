@@ -1,0 +1,120 @@
+{
+  "_comment": [
+    "Every conversion constant the savings engine uses, with the basis it rests",
+    "on. They are here and not in code because each one is an assumption about",
+    "the world that a user may disagree with, and because an assessment has to",
+    "reproduce years later under the config version it was computed with.",
+    "A unit or period absent from these tables is UNSCORED, never guessed."
+  ],
+  "periods_per_month": {
+    "month": {
+      "factor": 1.0,
+      "basis": "a monthly figure is already monthly",
+      "assumed": false
+    },
+    "year": {
+      "factor": 0.08333333333333333,
+      "basis": "12 calendar months in a year",
+      "assumed": false
+    },
+    "week": {
+      "factor": 4.333333333333333,
+      "basis": "52 weeks / 12 months; assumes pay every week of the year",
+      "assumed": true
+    },
+    "day": {
+      "factor": 21.75,
+      "basis": "261 working days / 12 months; assumes full-time, no unpaid leave",
+      "assumed": true
+    },
+    "hour": {
+      "factor": 173.33333333333334,
+      "basis": "40 hours x 52 weeks / 12 months; assumes a full-time schedule the posting did not state",
+      "assumed": true
+    }
+  },
+  "cost_units_per_month": {
+    "per_month": {
+      "factor": 1.0,
+      "basis": "already monthly"
+    },
+    "per_year": {
+      "factor": 0.08333333333333333,
+      "basis": "12 calendar months in a year"
+    },
+    "per_week": {
+      "factor": 4.333333333333333,
+      "basis": "52 weeks / 12 months"
+    }
+  },
+  "rate_units": {
+    "fraction": {
+      "factor": 1.0,
+      "basis": "0.32 means 32%"
+    },
+    "percent": {
+      "factor": 0.01,
+      "basis": "32 means 32%"
+    }
+  },
+  "required_cost_kinds": {
+    "onsite": [
+      "rent",
+      "utilities",
+      "food",
+      "transport",
+      "health_insurance"
+    ],
+    "project": [
+      "rent",
+      "utilities",
+      "food",
+      "transport",
+      "health_insurance"
+    ],
+    "remote": [
+      "rent",
+      "utilities",
+      "food",
+      "transport",
+      "health_insurance"
+    ]
+  },
+  "optional_cost_kinds": [
+    "flight_home"
+  ],
+  "pay_range_end": {
+    "use": "min",
+    "basis": "the lower end of a published range is the part the employer commits to; using the midpoint or the top reports a salary nobody offered"
+  },
+  "target_currency": "USD",
+  "scholarship": {
+    "_comment": [
+      "T = stipend + allowances + visa-capped work income. A waiver reduces the",
+      "cost side and never the income side: a waived tuition fee is money not",
+      "spent, not money received, and adding it to income would report a",
+      "scholarship as paying a salary it does not pay."
+    ],
+    "cost_kinds": [
+      "rent",
+      "utilities",
+      "food",
+      "transport",
+      "health_insurance"
+    ],
+    "default_arrangement": "onsite",
+    "default_arrangement_basis": "a scholarship is held at the institution unless the scheme says otherwise, so living costs are read where the institution is",
+    "work_income": {
+      "weeks_per_month": 4.333333333333333,
+      "basis": "52 weeks / 12 months",
+      "zero_when_unverified": true,
+      "zero_basis": "work income counts only when both the permitted hours and an hourly wage figure are on file. Unverified work income is zero, which understates the funding rather than inventing a job the visa may not allow"
+    }
+  },
+  "_unscored_policy": [
+    "Net savings is a number only when pay, tax and every required cost line",
+    "resolved. An incomplete cost list does not produce a smaller cost — it",
+    "produces a larger apparent saving, which is the direction that makes",
+    "somebody move country for a job that does not pay for itself."
+  ]
+}

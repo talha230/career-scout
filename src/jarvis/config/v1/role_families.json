@@ -1,0 +1,229 @@
+{
+  "_meta": {
+    "purpose": "Assign every opportunity to a role family, deterministically, from its title. The family keys sufficiency rules, selects discovery agents, and decides which opportunities a profile change affects. It is data, not code: adding a family is an edit here.",
+    "version": "1.0.0",
+    "rule": "Patterns are tested in the order listed and the first match wins, so put the specific before the general. A title matching nothing is 'unclassified', which fails closed at sufficiency rather than being guessed into the nearest family.",
+    "matching": "Case-insensitive regular expressions, matched against the opportunity title only. The description is deliberately not used: a description mentioning 'we work closely with data science' must not make a warehouse role a data-science job.",
+    "fallback_note": "engineering-general and the second operations entry are deliberate last-resort patterns. They catch real roles whose titles name no discipline ('Chief Engineer', 'Senior Manager') rather than leaving half the corpus unclassified. They are listed last so every specific family wins first. A title matching even these is genuine junk - 'Open Vacancies', 'CHECK BACK SOON' - and stays unclassified."
+  },
+  "unclassified_key": "unclassified",
+  "families": [
+    {
+      "key": "industrial-engineering",
+      "label": "Industrial & Manufacturing Engineering",
+      "patterns": [
+        "\\b(?:industrial|manufacturing|production|process|lean|continuous[ -]improvement)\\s+engineer",
+        "\\bindustrial\\s+engineering\\b",
+        "\\b(?:process|production)\\s+(?:improvement|excellence)\\b",
+        "\\bmanufacturing\\s+(?:specialist|analyst|lead)\\b",
+        "\\bplant\\s+engineer\\b"
+      ]
+    },
+    {
+      "key": "supply-chain",
+      "label": "Supply Chain, Planning & Procurement",
+      "patterns": [
+        "\\b(?:supply[ -]chain|logistics|procurement|sourcing|purchasing)\\b",
+        "\\b(?:demand|supply|production|material)\\s+plann?(?:er|ing)\\b",
+        "\\b(?:inventory|warehouse|fulfil?ment)\\s+(?:manager|analyst|lead|planner)\\b",
+        "\\bs&op\\b",
+        "\\bbuyer\\b"
+      ]
+    },
+    {
+      "key": "quality",
+      "label": "Quality & Reliability",
+      "patterns": [
+        "\\bquality\\s+(?:engineer|manager|analyst|specialist|assurance|control|lead)\\b",
+        "\\b(?:qa|qc)\\s+engineer\\b",
+        "\\breliability\\s+engineer\\b",
+        "\\bsix\\s+sigma\\b"
+      ]
+    },
+    {
+      "key": "project-management",
+      "label": "Project & Programme Management",
+      "patterns": [
+        "\\b(?:project|programme|program|portfolio)\\s+(?:manager|management|lead|engineer|coordinator)\\b",
+        "\\bpmo\\b",
+        "\\bscrum\\s+master\\b",
+        "\\bdelivery\\s+manager\\b"
+      ]
+    },
+    {
+      "key": "data-analytics",
+      "label": "Data & Analytics",
+      "patterns": [
+        "\\b(?:data|business\\s+intelligence|bi)\\s+(?:analyst|engineer|scientist|architect)\\b",
+        "\\banalytics\\s+(?:engineer|manager|lead|analyst)\\b",
+        "\\b(?:power\\s*bi|tableau|looker)\\b",
+        "\\bdata\\s+science\\b",
+        "\\bmachine\\s+learning\\s+engineer\\b"
+      ]
+    },
+    {
+      "key": "software-engineering",
+      "label": "Software Engineering",
+      "patterns": [
+        "\\b(?:software|backend|back[ -]end|frontend|front[ -]end|full[ -]?stack|mobile|platform|infrastructure)\\s+engineer\\b",
+        "\\b(?:software|application)\\s+developer\\b",
+        "\\b(?:devops|site\\s+reliability|sre|cloud)\\s+engineer\\b",
+        "\\bengineering\\s+manager\\b",
+        "\\bprogrammer\\b"
+      ]
+    },
+    {
+      "key": "mechanical-engineering",
+      "label": "Mechanical & Design Engineering",
+      "patterns": [
+        "\\b(?:mechanical|design|product|thermal|structural|mechatronics)\\s+engineer\\b",
+        "\\bcad\\s+(?:engineer|designer)\\b",
+        "\\bautomotive\\s+engineer\\b"
+      ]
+    },
+    {
+      "key": "electrical-engineering",
+      "label": "Electrical & Electronics Engineering",
+      "patterns": [
+        "\\b(?:electrical|electronics|hardware|power|controls?|automation|instrumentation)\\s+engineer\\b",
+        "\\bplc\\b",
+        "\\bembedded\\s+(?:engineer|software)\\b"
+      ]
+    },
+    {
+      "key": "civil-engineering",
+      "label": "Civil & Construction Engineering",
+      "patterns": [
+        "\\b(?:civil|structural|construction|geotechnical|site)\\s+engineer\\b",
+        "\\bquantity\\s+surveyor\\b",
+        "\\bconstruction\\s+manager\\b"
+      ]
+    },
+    {
+      "key": "finance",
+      "label": "Finance, Accounting & Costing",
+      "patterns": [
+        "\\b(?:financial|finance|cost|revenue|fp&a)\\s+(?:analyst|manager|controller|engineer)\\b",
+        "\\b(?:accountant|accounting|auditor|audit)\\b",
+        "\\btreasur(?:y|er)\\b"
+      ]
+    },
+    {
+      "key": "sales",
+      "label": "Sales & Account Management",
+      "patterns": [
+        "\\b(?:account|sales|business\\s+development)\\s+(?:executive|manager|representative|director|lead)\\b",
+        "\\b(?:solutions?|sales)\\s+(?:engineer|architect|specialist)\\b",
+        "\\bcustomer\\s+success\\b",
+        "\\b(?:seller|ae|bdr|sdr)\\b"
+      ]
+    },
+    {
+      "key": "research",
+      "label": "Research & Academia",
+      "patterns": [
+        "\\b(?:research(?:er)?|postdoc(?:toral)?|phd|doctoral)\\b",
+        "\\b(?:scientist|lecturer|professor|fellow)\\b",
+        "\\bscholarship\\b"
+      ]
+    },
+    {
+      "key": "hr",
+      "label": "People & Human Resources",
+      "patterns": [
+        "\\b(?:hr|human\\s+resources|people|talent)\\s+(?:manager|partner|analyst|lead|specialist)\\b",
+        "\\brecruit(?:er|ment|ing)\\b"
+      ]
+    },
+    {
+      "key": "product",
+      "label": "Product Management & Design",
+      "patterns": [
+        "\\bproduct\\s+(?:manager|management|owner|lead|director|analyst)\\b",
+        "\\b(?:ux|ui|product|visual|graphic|interaction)\\s+design(?:er)?\\b",
+        "\\bdesign\\s+(?:lead|manager|director)\\b",
+        "\\buser\\s+(?:research|experience)\\b"
+      ]
+    },
+    {
+      "key": "marketing",
+      "label": "Marketing & Communications",
+      "patterns": [
+        "\\b(?:marketing|brand|content|growth|communications|seo|demand\\s+gen\\w*)\\b",
+        "\\bcopywriter\\b",
+        "\\bpublic\\s+relations\\b"
+      ]
+    },
+    {
+      "key": "security",
+      "label": "Security & Trust",
+      "patterns": [
+        "\\b(?:security|infosec|appsec|trust\\s+and\\s+safety|cyber\\w*)\\s+(?:engineer|analyst|manager|architect|lead|specialist)\\b",
+        "\\b(?:security|privacy)\\s+(?:operations|engineering)\\b",
+        "\\bpenetration\\s+test\\w*\\b"
+      ]
+    },
+    {
+      "key": "customer-support",
+      "label": "Customer Support & Service",
+      "patterns": [
+        "\\b(?:customer|technical|client)\\s+(?:support|service|success|experience)\\b",
+        "\\bsupport\\s+(?:engineer|specialist|manager|agent|representative)\\b",
+        "\\bservice\\s+(?:desk|technician|advisor)\\b",
+        "\\bhelp\\s?desk\\b"
+      ]
+    },
+    {
+      "key": "legal",
+      "label": "Legal & Compliance",
+      "patterns": [
+        "\\b(?:legal|counsel|attorney|paralegal|compliance|regulatory)\\b"
+      ]
+    },
+    {
+      "key": "healthcare",
+      "label": "Healthcare & Life Sciences",
+      "patterns": [
+        "\\b(?:nurse|physician|clinical|medical|pharmac\\w+|laborator\\w+|biolog\\w+|chemist)\\b"
+      ]
+    },
+    {
+      "key": "skilled-trades",
+      "label": "Skilled Trades & Field Service",
+      "patterns": [
+        "\\b(?:technician|mechanic|electrician|welder|machinist|fitter|operator|installer)\\b",
+        "\\bfield\\s+service\\b",
+        "\\bmaintenance\\s+(?:technician|engineer|lead)\\b",
+        "\\b(?:driver|porter|warehouse\\s+associate|picker)\\b"
+      ]
+    },
+    {
+      "key": "operations",
+      "label": "Operations & General Management",
+      "patterns": [
+        "\\boperations\\s+(?:manager|analyst|lead|specialist|director)\\b",
+        "\\b(?:shift|site|plant|factory)\\s+(?:manager|supervisor|lead)\\b",
+        "\\bgeneral\\s+manager\\b",
+        "\\bchief\\s+of\\s+staff\\b"
+      ]
+    },
+    {
+      "key": "engineering-general",
+      "label": "Engineering (unspecified discipline)",
+      "patterns": [
+        "\\bengineer(?:ing)?\\b",
+        "\\barchitect\\b",
+        "\\bscientist\\b",
+        "\\bdeveloper\\b"
+      ]
+    },
+    {
+      "key": "general-professional",
+      "label": "General Professional (discipline not stated in the title)",
+      "patterns": [
+        "\\b(?:manager|director|head\\s+of|lead|supervisor|chief|vp|president)\\b",
+        "\\b(?:analyst|specialist|coordinator|strategist|partner|associate|consultant)\\b"
+      ]
+    }
+  ]
+}

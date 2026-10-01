@@ -1,0 +1,386 @@
+{
+  "_meta": {
+    "purpose": "Registry of every job source the pipeline is permitted to call.",
+    "version": "0.1.0",
+    "last_probed": "2026-08-08",
+    "compliance_rule": "Build spec Rule 2. LinkedIn, Indeed and Glassdoor are NOT here and must never be added - their terms prohibit automated collection. Only official/public APIs and employer-published feeds are listed. Any source without a legitimate API is recorded under manual_review_only and is never fetched programmatically.",
+    "provenance_rule": "Every board token below returned HTTP 200 with a non-empty job list when probed on 2026-08-08. Nothing in this file is a guess. Re-run `python -m jobfinder.phase2.verify_sources` to re-probe; dead tokens are marked, never silently dropped.",
+    "etiquette": {
+      "user_agent": "JarvisAgent (local-first job search assistant; +https://github.com/talha230/jarvis-plugin)",
+      "min_seconds_between_requests": 1.0,
+      "max_retries": 3,
+      "backoff_seconds": [
+        2,
+        5,
+        15
+      ],
+      "note": "One identified caller, rate-limited, no concurrency against a single host. These are free public endpoints and the pipeline should not cost their operators anything noticeable."
+    }
+  },
+  "aggregators": [
+    {
+      "name": "remoteok",
+      "provider": "remoteok",
+      "enabled": true,
+      "url": "https://remoteok.com/api",
+      "auth_required": false,
+      "coverage": "Worldwide remote roles, tech-weighted.",
+      "salary_fields": [
+        "salary_min",
+        "salary_max"
+      ],
+      "salary_note": "RemoteOK exposes salary_min/salary_max but frequently returns 0 or omits them. A 0 is treated as NOT DISCLOSED, never as a salary of zero.",
+      "first_record_is_legal_notice": true,
+      "first_record_note": "Index 0 of the RemoteOK array is an API legal/attribution notice, not a job. It must be skipped or it becomes a phantom posting.",
+      "probed_2026_08_08": {
+        "status": 200,
+        "records": 101
+      }
+    },
+    {
+      "name": "arbeitnow",
+      "provider": "arbeitnow",
+      "enabled": true,
+      "url": "https://www.arbeitnow.com/api/job-board-api",
+      "auth_required": false,
+      "paginated": true,
+      "coverage": "Europe, Germany-weighted. Tags frequently include visa-sponsorship signals, which is directly useful for a candidate who needs sponsorship everywhere.",
+      "salary_fields": [],
+      "salary_note": "No structured salary field. Salary is therefore always stored as not disclosed for this source unless a range is parsed out of the description text, in which case it is stored with salary_source='parsed_from_description' and flagged lower-confidence.",
+      "probed_2026_08_08": {
+        "status": 200,
+        "records": 175
+      }
+    },
+    {
+      "name": "himalayas",
+      "provider": "himalayas",
+      "enabled": true,
+      "url": "https://himalayas.app/jobs/api?limit=20",
+      "auth_required": false,
+      "coverage": "Worldwide remote roles.",
+      "salary_fields": [
+        "minSalary",
+        "maxSalary",
+        "currency",
+        "salaryPeriod"
+      ],
+      "terms": "Read at himalayas.app/api on 2026-09-25: free public JSON API, no auth. Conditions: link back to the Himalayas URL and name Himalayas as the source; do not resubmit its jobs to other boards (Jooble, Google Jobs, LinkedIn...); data refreshes daily so polling more than daily brings nothing. Jarvis stores and shows the link-back URL, republishes nothing, and runs once a day.",
+      "enabled_by": "T031b (2026-09-25) — the deliberate decision the earlier note asked for.",
+      "probed_2026_08_08": {
+        "status": 200,
+        "records": 5,
+        "has_structured_salary": true
+      },
+      "probed_2026_09_25": {
+        "status": 200
+      }
+    },
+    {
+      "name": "jobicy",
+      "provider": "jobicy",
+      "enabled": true,
+      "url": "https://jobicy.com/api/v2/remote-jobs?count=50",
+      "auth_required": false,
+      "coverage": "Worldwide remote roles.",
+      "salary_fields": [
+        "annualSalaryMin",
+        "annualSalaryMax",
+        "salaryCurrency"
+      ],
+      "terms": "The API's own friendlyNotice (2026-09-25): credit Jobicy with a direct link to the source, and send applications to the original job URL in the feed. Jarvis stores that URL as the posting's source and apply target.",
+      "enabled_by": "T031b (2026-09-25) — the deliberate decision the earlier note asked for.",
+      "probed_2026_08_08": {
+        "status": 200,
+        "records": 5
+      },
+      "probed_2026_09_25": {
+        "status": 200
+      }
+    }
+  ],
+  "employer_boards": {
+    "greenhouse": {
+      "provider": "greenhouse",
+      "enabled": true,
+      "url_template": "https://boards-api.greenhouse.io/v1/boards/{token}/jobs?content=true",
+      "auth_required": false,
+      "content_is_html_escaped": true,
+      "content_note": "The `content` field is HTML-escaped HTML. It must be unescaped and stripped before any keyword matching, or skill matching silently fails on entities like &lt;p&gt;.",
+      "boards": [
+        {
+          "token": "careem",
+          "company": "Careem",
+          "hq_country": "AE",
+          "why_listed": "Dubai-headquartered. Top-ranked country on the candidate's stated preferences.",
+          "probed": {
+            "status": 200,
+            "records": 24
+          }
+        },
+        {
+          "token": "flexport",
+          "company": "Flexport",
+          "hq_country": "US",
+          "why_listed": "Freight forwarding and logistics - direct supply-chain relevance.",
+          "probed": {
+            "status": 200,
+            "records": 161
+          }
+        },
+        {
+          "token": "xometry",
+          "company": "Xometry",
+          "hq_country": "US",
+          "why_listed": "On-demand manufacturing marketplace - strong manufacturing-engineering relevance.",
+          "probed": {
+            "status": 200,
+            "records": 211
+          }
+        },
+        {
+          "token": "redwoodmaterials",
+          "company": "Redwood Materials",
+          "hq_country": "US",
+          "why_listed": "Battery materials manufacturing - process and industrial engineering roles.",
+          "probed": {
+            "status": 200,
+            "records": 141
+          }
+        },
+        {
+          "token": "lucidmotors",
+          "company": "Lucid Motors",
+          "hq_country": "US",
+          "why_listed": "Automotive manufacturing - classic industrial-engineering employer.",
+          "probed": {
+            "status": 200,
+            "records": 328
+          }
+        },
+        {
+          "token": "samsara",
+          "company": "Samsara",
+          "hq_country": "US",
+          "why_listed": "Industrial IoT and fleet operations.",
+          "probed": {
+            "status": 200,
+            "records": 290
+          }
+        },
+        {
+          "token": "nuro",
+          "company": "Nuro",
+          "hq_country": "US",
+          "why_listed": "Autonomous vehicle manufacturing and operations.",
+          "probed": {
+            "status": 200,
+            "records": 104
+          }
+        },
+        {
+          "token": "astranis",
+          "company": "Astranis",
+          "hq_country": "US",
+          "why_listed": "Satellite manufacturing - production and industrial engineering.",
+          "probed": {
+            "status": 200,
+            "records": 88
+          }
+        },
+        {
+          "token": "markforged",
+          "company": "Markforged",
+          "hq_country": "US",
+          "why_listed": "Additive manufacturing hardware.",
+          "probed": {
+            "status": 200,
+            "records": 3
+          }
+        },
+        {
+          "token": "waymo",
+          "company": "Waymo",
+          "hq_country": "US",
+          "why_listed": "Fleet operations and manufacturing engineering.",
+          "probed": {
+            "status": 200,
+            "records": 396
+          }
+        },
+        {
+          "token": "instacart",
+          "company": "Instacart",
+          "hq_country": "US",
+          "why_listed": "Operations analytics and supply chain.",
+          "probed": {
+            "status": 200,
+            "records": 116
+          }
+        },
+        {
+          "token": "databricks",
+          "company": "Databricks",
+          "hq_country": "US",
+          "why_listed": "Data analytics roles matching the candidate's SQL/Python/BI stack.",
+          "probed": {
+            "status": 200,
+            "records": 819
+          }
+        },
+        {
+          "token": "stripe",
+          "company": "Stripe",
+          "hq_country": "US",
+          "why_listed": "Large board; operations and analytics roles.",
+          "probed": {
+            "status": 200,
+            "records": 550
+          }
+        },
+        {
+          "token": "airbnb",
+          "company": "Airbnb",
+          "hq_country": "US",
+          "why_listed": "Operations analytics roles.",
+          "probed": {
+            "status": 200,
+            "records": 189
+          }
+        }
+      ]
+    },
+    "lever": {
+      "provider": "lever",
+      "enabled": true,
+      "url_template": "https://api.lever.co/v0/postings/{token}?mode=json",
+      "auth_required": false,
+      "boards": [
+        {
+          "token": "palantir",
+          "company": "Palantir Technologies",
+          "hq_country": "US",
+          "why_listed": "Operations and deployment engineering roles.",
+          "probed": {
+            "status": 200,
+            "records": 305
+          }
+        },
+        {
+          "token": "spotify",
+          "company": "Spotify",
+          "hq_country": "SE",
+          "why_listed": "European employer with analytics roles.",
+          "probed": {
+            "status": 200,
+            "records": 103
+          }
+        },
+        {
+          "token": "matchgroup",
+          "company": "Match Group",
+          "hq_country": "US",
+          "why_listed": "Analytics roles.",
+          "probed": {
+            "status": 200,
+            "records": 83
+          }
+        }
+      ],
+      "rejected_tokens": [
+        {
+          "token": "leverdemo",
+          "reason": "Returns 388 postings but is Lever's own demo/sandbox board, not a real employer. Ingesting it would inject fake jobs into a system whose entire premise is that no fabricated data enters it."
+        },
+        {
+          "token": "netflix",
+          "reason": "HTTP 404 - not hosted on Lever. Removed rather than left in as a plausible-looking dead token."
+        }
+      ]
+    },
+    "workable": {
+      "provider": "workable",
+      "enabled": true,
+      "url_template": "https://apply.workable.com/api/v1/widget/accounts/{token}?details=true",
+      "auth_required": false,
+      "boards": [
+        {
+          "token": "foodics",
+          "company": "Foodics",
+          "hq_country": "SA",
+          "why_listed": "Saudi-headquartered. Muslim-majority, English-workable market per the candidate's stated preference.",
+          "probed": {
+            "status": 200,
+            "records": 18
+          }
+        }
+      ]
+    }
+  },
+  "government_portals": [
+    {
+      "name": "usajobs",
+      "enabled": false,
+      "url": "https://data.usajobs.gov/api/search",
+      "auth_required": true,
+      "auth_note": "Requires a free API key plus a User-Agent email, requested at https://developer.usajobs.gov/APIRequest. NOT ENABLED because no key has been supplied - see docs/CREDENTIALS.md. This is a stop-and-ask item, not something to stub.",
+      "relevance": "US federal roles. Note these are overwhelmingly restricted to US citizens, so relevance to this candidate is low even once enabled."
+    },
+    {
+      "name": "eures",
+      "enabled": false,
+      "url": "https://europa.eu/eures/portal/jv-se/home",
+      "auth_required": false,
+      "auth_note": "The EU EURES portal does not currently expose a documented stable public JSON API for third-party job search. Left disabled rather than scraped - Rule 2 says skip and log, not scrape.",
+      "relevance": "EU-wide vacancies."
+    }
+  ],
+  "manual_review_only": [
+    {
+      "name": "LinkedIn",
+      "reason": "Terms of service prohibit automated collection. Never add a client for this.",
+      "use": "Search by hand in a browser."
+    },
+    {
+      "name": "Indeed",
+      "reason": "Terms of service prohibit automated collection. Their partner API was discontinued for general use.",
+      "use": "Search by hand in a browser."
+    },
+    {
+      "name": "Glassdoor",
+      "reason": "Terms of service prohibit automated collection.",
+      "use": "Search by hand in a browser."
+    },
+    {
+      "name": "Bayt",
+      "reason": "Major GCC job board with no public API available to this project. Highly relevant to the candidate's top-ranked countries.",
+      "use": "Search by hand - this is worth doing manually given how well the GCC matches the stated preferences."
+    },
+    {
+      "name": "GulfTalent",
+      "reason": "GCC job board, no public API.",
+      "use": "Search by hand."
+    },
+    {
+      "name": "Naukrigulf",
+      "reason": "GCC job board, no public API.",
+      "use": "Search by hand."
+    },
+    {
+      "name": "Upwork",
+      "reason": "Freelance/contract marketplace with no open, keyless public API for listings found for this project; access needs a registered developer application and acceptance of the marketplace's own terms. Not verified further, so not fetched.",
+      "use": "Search by hand; add a project you find as a portal application."
+    },
+    {
+      "name": "Fiverr",
+      "reason": "Freelance/contract marketplace with no open, keyless public API for listings found for this project; access needs a registered developer application and acceptance of the marketplace's own terms. Not verified further, so not fetched.",
+      "use": "Search by hand; add a project you find as a portal application."
+    },
+    {
+      "name": "Freelancer.com",
+      "reason": "Freelance/contract marketplace with no open, keyless public API for listings found for this project; access needs a registered developer application and acceptance of the marketplace's own terms. Not verified further, so not fetched.",
+      "use": "Search by hand; add a project you find as a portal application."
+    }
+  ],
+  "registered_but_disabled": []
+}

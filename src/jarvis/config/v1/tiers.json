@@ -1,0 +1,57 @@
+{
+  "_meta": {
+    "purpose": "Tier assignment (A / B / C / Reject) for the Phase 4 dashboard.",
+    "version": "0.1.0",
+    "spec_note": "The original spec's section 11 was not supplied. These cut-offs are DERIVED. They are round numbers chosen to give a usable working split, not measured thresholds - change them freely.",
+    "rule": "Tier is a pure function of total_score and confidence. No LLM judgement enters tiering."
+  },
+
+  "tiers": [
+    {
+      "id": "A", "label": "Apply now",
+      "min_score": 70, "max_score": 100,
+      "colour": "#1a7f37",
+      "meaning": "Strong match on the deterministic score. Worth a tailored CV and cover letter.",
+      "requires_confidence_at_least": "medium",
+      "requires_confidence_note": "A score above 70 built from too few scored components is capped at Tier B until the missing inputs are supplied, so a high number from thin evidence cannot masquerade as a strong match."
+    },
+    { "id": "B", "label": "Worth considering", "min_score": 55, "max_score": 69.999,
+      "colour": "#9a6700",
+      "meaning": "Decent match with real gaps. Apply if the pipeline is not full of Tier A." },
+    { "id": "C", "label": "Long shot", "min_score": 40, "max_score": 54.999,
+      "colour": "#8250df",
+      "meaning": "Weak match. Only worth it if something about the specific company matters to you." },
+    { "id": "REJECT", "label": "Not worth applying", "min_score": 0, "max_score": 39.999,
+      "colour": "#82071e",
+      "meaning": "Scored, but too weak to justify the effort. Distinct from FILTERED, which never reached scoring at all." }
+  ],
+
+  "filtered_tier": {
+    "id": "FILTERED", "label": "Rejected before scoring",
+    "colour": "#57606a",
+    "meaning": "A hard filter in config/hard_filters.json excluded this posting. It has no score. The dashboard shows which rule fired and the text that triggered it, so a wrong filter is visible rather than invisible."
+  },
+
+  "reason_generation": {
+    "source": "Reasons are assembled from the stored scoring breakdown - the actual component scores, matched and missing skills, and fired filter rules.",
+    "prohibited": "No LLM-written generic encouragement. If a reason cannot be derived from a number in the breakdown, it is not shown.",
+    "why_worth_applying_rules": [
+      { "when": "component skill_match >= 70", "text": "Skills line up: {matched_count} of {required_count} required skills matched, including {top_matched}." },
+      { "when": "component career_alignment >= 80", "text": "Title is close to your target roles ({best_target_role}, {alignment_score}% similar)." },
+      { "when": "component visa >= 80", "text": "{country_name} has a workable route for a Pakistani national ({visa_band})." },
+      { "when": "visa_sponsorship_mentioned == true", "text": "The posting explicitly mentions sponsorship or relocation support." },
+      { "when": "component location_remote >= 80", "text": "{country_name} scores {location_score}/100 on your English-language and Muslim-community preferences." },
+      { "when": "component experience >= 90", "text": "Your {candidate_years} documented years meet the {required_years} the posting asks for." },
+      { "when": "salary_disclosed == true", "text": "Pay is disclosed: {salary_range}." }
+    ],
+    "why_might_be_rejected_rules": [
+      { "when": "component skill_match < 50", "text": "Skill gap: missing {missing_count} required skills, including {top_missing}." },
+      { "when": "component experience < 60", "text": "The posting asks for {required_years} years; {candidate_years} are documented." },
+      { "when": "component visa <= 30", "text": "Visa route into {country_name} is difficult for a Pakistani national ({visa_band})." },
+      { "when": "visa_refusal_detected == true", "text": "The posting appears to rule out sponsorship: \"{visa_evidence}\"." },
+      { "when": "component education < 60", "text": "The posting asks for a {required_degree}; your highest is a Bachelor's." },
+      { "when": "confidence == 'low'", "text": "Low confidence: {unscored_count} of 9 components could not be scored ({unscored_list})." },
+      { "when": "component career_alignment < 50", "text": "The title is some distance from your target roles - closest was {best_target_role} at {alignment_score}%." }
+    ]
+  }
+}

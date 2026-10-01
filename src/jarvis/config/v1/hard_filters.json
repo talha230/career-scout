@@ -1,0 +1,107 @@
+{
+  "_meta": {
+    "purpose": "Hard filters. These reject a posting before scoring, and every rejection writes a `rejection` row naming the rule and quoting the evidence that fired it.",
+    "version": "1.0.0",
+    "reversibility": "Rejections are stored, never deleted, and the posting keeps its row. Disable a rule here and re-run to get those postings back.",
+    "split_from_eligibility": [
+      "A hard filter answers a question about the POSTING: is it a real, current, professional vacancy in a place the user will consider.",
+      "Eligibility (T037) answers a question about the READER: may this person hold this role, given their own confirmed citizenship, qualifications and languages.",
+      "The legacy config mixed the two, and every profile-dependent rule in it was written against one candidate — 'candidate_languages: english, urdu, punjabi' and 'citizenship: PK only' were literals in the filter table. Those rules moved to eligibility, where they are read from the user's own profile records, and where a wrong answer SOFT-HIDES with a reason instead of rejecting: a profile fact can be missing, stale or simply unconfirmed, and the fix is to correct the profile rather than to re-crawl a board."
+    ],
+    "logging_rule": "Every rejection names the exact rule and the evidence string that triggered it. A rejected posting is never silently dropped."
+  },
+
+  "filters": [
+    {
+      "id": "F10_missing_essential_data",
+      "enabled": true,
+      "label": "Posting lacks a title, employer or source URL",
+      "rationale": "A record that cannot be traced to a source URL cannot be part of an auditable system, and a posting with no title or employer cannot be applied to.",
+      "false_positive_risk": "NONE"
+    },
+    {
+      "id": "F08_non_professional_role",
+      "enabled": true,
+      "label": "Posting is an internship, apprenticeship, working-student or volunteer role",
+      "rationale": "A user with documented professional experience is looking for professional-level work. This is about the posting's level, not about the reader.",
+      "patterns": [
+        "\\bintern(ship)?\\b",
+        "\\bapprentice(ship)?\\b",
+        "\\bwerkstudent\\b",
+        "\\bpraktikum\\b",
+        "\\bvolunteer\\b",
+        "\\bunpaid\\b",
+        "\\bausbildung\\b",
+        "\\bduales studium\\b",
+        "\\bgraduate scheme\\b"
+      ],
+      "applies_to": "title_only",
+      "applies_to_rationale": "Matched against the title alone. These words appear routinely in the body of ordinary descriptions ('you will mentor interns'), and matching there rejects good roles.",
+      "false_positive_risk": "LOW"
+    },
+    {
+      "id": "F07_posting_too_old",
+      "enabled": true,
+      "label": "Posting is older than the staleness window",
+      "window_setting": "staleness_window_days",
+      "window_setting_rationale": "The window is the `staleness_window_days` setting, not a number here, so one value governs both what discovery re-fetches and what scoring rejects. Two windows for one idea drift apart.",
+      "null_date_behaviour": "keep",
+      "null_date_rationale": "A posting with no date is NOT rejected. Rejecting on a missing value treats an unknown as a fact, and several sources simply do not publish a date.",
+      "false_positive_risk": "LOW"
+    },
+    {
+      "id": "F05_experience_far_above_documented",
+      "enabled": true,
+      "label": "Posting requires substantially more experience than the user has documented",
+      "threshold_years_above_documented": 6,
+      "rationale": "A stated year requirement is often aspirational, so the threshold is deliberately generous: only a demand more than six years above what the user can document rejects. Experience is also a scored component, so a smaller gap is reflected in the score rather than in an exclusion.",
+      "unknown_years_behaviour": "keep",
+      "unknown_years_rationale": "A user whose documented years cannot be established is not filtered on them. Comparing a requirement against an unknown would reject the whole board for an unfinished profile.",
+      "false_positive_risk": "MEDIUM"
+    },
+    {
+      "id": "F09_excluded_countries",
+      "enabled": true,
+      "label": "Posting is in a country the user has excluded",
+      "excluded_country_codes": [],
+      "rationale": "EMPTY BY DESIGN. Which countries are searched at all is the `country` table's `enabled` flag (T031 country packs); this rule exists for a place a user will not go to even though the pack is on. Country preference as a ranking bonus lives in country_preferences.json, not here.",
+      "false_positive_risk": "N/A"
+    },
+
+    {
+      "id": "F01_explicit_no_sponsorship_abroad",
+      "enabled": false,
+      "moved_to": "eligibility.right_to_work",
+      "label": "MOVED — posting refuses visa sponsorship outside the user's own country",
+      "rationale": "Depends on the reader's citizenship and residence, so it is an eligibility question and soft-hides with a reason. Enabling it here would reject on a profile fact that may be unconfirmed."
+    },
+    {
+      "id": "F02_security_clearance_required",
+      "enabled": false,
+      "moved_to": "eligibility.security_clearance",
+      "label": "MOVED — posting requires a national security clearance",
+      "rationale": "A clearance requires citizenship of the issuing country, so whether it excludes the reader depends on the reader."
+    },
+    {
+      "id": "F03_citizenship_or_residency_required",
+      "enabled": false,
+      "moved_to": "eligibility.right_to_work",
+      "label": "MOVED — posting requires citizenship or settled status",
+      "rationale": "Same reason as F01. The demand is detected at ingest and compared against the user's own confirmed citizenship."
+    },
+    {
+      "id": "F04_degree_above_user",
+      "enabled": false,
+      "moved_to": "eligibility.qualification",
+      "label": "MOVED — posting requires a qualification above the user's",
+      "rationale": "Compared against the user's own documented highest qualification on the configured ladder. A Master's requirement does not exclude a Master's holder, and the legacy rule could only encode one candidate's degree."
+    },
+    {
+      "id": "F06_language_requirement_user_lacks",
+      "enabled": false,
+      "moved_to": "eligibility.language",
+      "label": "MOVED — posting requires a language the user has not confirmed",
+      "rationale": "The legacy rule listed one candidate's three languages as literals. Eligibility reads the user's own confirmed `languages[].language` records, and a demand whose language could not be read is UNSCORED rather than treated as satisfied."
+    }
+  ]
+}

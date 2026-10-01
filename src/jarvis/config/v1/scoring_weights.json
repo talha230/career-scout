@@ -1,0 +1,204 @@
+{
+  "_meta": {
+    "purpose": "The complete, auditable definition of the Phase 3 match score. Nothing here is hardcoded in Python - change a number in this file and every score changes.",
+    "version": "0.1.0",
+    "weights_source": "Build spec Phase 3, quoting original spec section 8.",
+    "rule_4_compliance": "Every component below produces a number from a stated formula over stated inputs. No component is produced by an LLM. The LLM's only role in Phase 3 is supplying skill synonyms (config/skill_synonyms.json), which are INPUTS a human can read and edit - the arithmetic that turns them into a score is here.",
+    "reproducibility": "Every scored job stores its component scores, the weights used, and the formula string, so total = sum(component * weight) can be recomputed by hand. tests/test_phase3_scoring.py does exactly that."
+  },
+  "weights": {
+    "skill_match": {
+      "weight": 0.25,
+      "label": "Skill Match"
+    },
+    "experience": {
+      "weight": 0.2,
+      "label": "Experience"
+    },
+    "career_alignment": {
+      "weight": 0.15,
+      "label": "Career Alignment"
+    },
+    "education": {
+      "weight": 0.1,
+      "label": "Education"
+    },
+    "salary": {
+      "weight": 0.1,
+      "label": "Salary"
+    },
+    "location_remote": {
+      "weight": 0.05,
+      "label": "Location / Remote"
+    },
+    "visa": {
+      "weight": 0.05,
+      "label": "Visa"
+    },
+    "cv_enhancement": {
+      "weight": 0.05,
+      "label": "CV Enhancement"
+    },
+    "company_quality": {
+      "weight": 0.05,
+      "label": "Company Quality"
+    }
+  },
+  "weights_must_sum_to": 1.0,
+  "unscored_policy": {
+    "behaviour": "renormalise",
+    "explanation": "If a component cannot be computed from real data (for example salary, when neither the posting nor the candidate has stated a figure), it is recorded as UNSCORED with a reason. Its weight is removed and the remaining weights are renormalised to sum to 1.0. The job's record states which components were unscored and what the effective weights became.",
+    "why_not_zero": "Scoring an unknown as 0 would rank a job with an undisclosed salary below an identical job with a bad one. That is an invented judgement.",
+    "why_not_neutral_50": "A 50 is a fabricated number presented as a measurement. Rule 1 forbids it.",
+    "max_unscored_components_before_flag": 3,
+    "flag_note": "A job scored with more than 3 unscored components is marked low_confidence in the output."
+  },
+  "components": {
+    "skill_match": {
+      "formula": "100 * (sum(weight of candidate skills found in posting) / sum(weight of all skills the posting requires))",
+      "skill_weights": {
+        "critical": 3.0,
+        "important": 2.0,
+        "nice_to_have": 1.0
+      },
+      "criticality_rules": [
+        {
+          "if_matched_in": "title",
+          "criticality": "critical"
+        },
+        {
+          "if_matched_in": "requirements_section",
+          "criticality": "important"
+        },
+        {
+          "if_matched_in": "description_body",
+          "criticality": "nice_to_have"
+        }
+      ],
+      "requirements_section_markers": [
+        "requirements",
+        "qualifications",
+        "what you'll need",
+        "what you need",
+        "who you are",
+        "must have",
+        "required skills",
+        "your profile",
+        "what we're looking for",
+        "minimum qualifications",
+        "essential"
+      ],
+      "matching_note": "Matching is literal substring/word-boundary matching against the candidate's skill keywords PLUS their documented synonyms. It is not an embedding similarity, so every match is explainable as 'this exact phrase appeared here'.",
+      "minimum_recognised_skills": 3,
+      "minimum_recognised_skills_rationale": "The formula is a ratio over the skills the vocabulary recognises. Computed over one or two hits it is not a measurement: a firmware role mentioning 'Python' and 'root cause analysis' scored 100% on a job requiring nothing this candidate can do, and those roles dominated the first ranking run. Below 3 recognised skills the component reports UNSCORED with that reason rather than a confident number.",
+      "unscored_if": "The posting contains fewer than minimum_recognised_skills recognisable skills.",
+      "candidate_skills_source": "confirmed skills[] and certificates[] records in profile_record, matched against this vocabulary. The candidate_has flag in skill_synonyms.json is NOT read: it is one person's skill set living in a packaged file, and a second user would inherit it."
+    },
+    "experience": {
+      "formula": "if required_years is null: 100 (nothing to fail). elif candidate_years >= required_years: 100. else: 100 * (candidate_years / required_years)",
+      "candidate_years_basis": "computed from confirmed work[] date ranges in profile_record: (end - start).days / 365.25 summed over the non-overlapping union. UNSCORED when no confirmed role has a readable start date.",
+      "why_conservative": "Scoring against an unverified 6.6 years would inflate every match. The optimistic figure is reported alongside so the effect of answering Q1 is visible.",
+      "required_years_extraction": "Parsed from the posting text with the patterns in required_years_patterns. If several appear, the SMALLEST is used, because job ads state a minimum.",
+      "required_years_patterns": [
+        "(\\d+)\\s*\\+?\\s*(?:to|-|–)?\\s*(\\d+)?\\s*years?(?:\\s+of)?\\s+(?:relevant\\s+|professional\\s+|industry\\s+|work\\s+)?experience",
+        "minimum\\s+(?:of\\s+)?(\\d+)\\s+years?",
+        "at\\s+least\\s+(\\d+)\\s+years?"
+      ],
+      "overqualification_penalty": {
+        "enabled": true,
+        "applies_when": "candidate_years > required_years + 8",
+        "penalty": 10,
+        "rationale": "Being far over a stated requirement genuinely reduces callback odds. Capped at a 10-point deduction so it nudges the ranking rather than dominating it.",
+        "threshold_years_above": 8,
+        "threshold_rationale": "The number the applies_when sentence describes, made machine-readable. I-23: no threshold is a constant in a code path."
+      }
+    },
+    "career_alignment": {
+      "formula": "100 * max over target roles of Jaccard(token_set(job_title), token_set(target_role)), plus containment_bonus (capped at 100) when every token of a target role appears in the title; a contained role scores at least containment_floor before the bonus",
+      "target_roles_source": "confirmed preferences.target_roles[] records in profile_record. UNSCORED when none are confirmed: there is nothing to measure a title's distance from.",
+      "unscored_if": "the user has confirmed no target roles, or the posting has no title",
+      "formula_note": "The previous description said difflib SequenceMatcher, which the engine never used. Character similarity rated 'Firmware Engineer' against 'Process Engineer' at 0.75 because both end in 'Engineer', and unrelated engineering roles dominated the first ranking run. Token sets make the overlap 1 of 3, which is what a reader would say.",
+      "containment_bonus": 15,
+      "containment_floor": 0.85
+    },
+    "education": {
+      "formula": "lookup of the highest degree the posting requires against the candidate's highest degree, using the education_ladder below",
+      "education_ladder": {
+        "none": 0,
+        "diploma": 1,
+        "bachelor": 2,
+        "master": 3,
+        "phd": 4
+      },
+      "candidate_level": "bachelor",
+      "candidate_level_basis": "the highest confirmed education[].studyType in profile_record, read by the same degree patterns used on a posting so both sides land on the same rung.",
+      "scoring": {
+        "candidate_meets_or_exceeds": 100,
+        "candidate_one_level_below": 55,
+        "candidate_two_or_more_below": 15,
+        "posting_states_no_requirement": 100
+      },
+      "accreditation_bonus": {
+        "points": 5,
+        "cap": 100,
+        "applies_when": "the posting names an engineering-licensing body or a Washington Accord signatory jurisdiction",
+        "rationale": "The candidate's degree is PEC-accredited under the Washington Accord, which is a real, documented advantage for those specific roles."
+      }
+    },
+    "salary": {
+      "formula": "if candidate_minimum is null: UNSCORED. elif posting salary not disclosed: UNSCORED. elif posting_max >= candidate_minimum: 100. else: 100 * (posting_max / candidate_minimum)",
+      "candidate_minimum_source": "confirmed preferences.salary_minimum in profile_record",
+      "current_status": "UNSCORED FOR EVERY JOB - the candidate has supplied no salary expectation (master_cv x_open_questions.Q9) and most postings disclose no salary. This 10% is therefore currently redistributed across the other components on almost every job, and each job's record says so.",
+      "currency_note": "Cross-currency comparison requires an FX rate. No FX rate source is configured, so a posting whose currency differs from the candidate's stated minimum is UNSCORED with reason 'currency_mismatch_no_fx_source' rather than converted at a made-up rate.",
+      "estimated_salary_note": "estimated_salary_* columns are NEVER used by this component. Only a figure the employer actually disclosed can score."
+    },
+    "location_remote": {
+      "formula": "country_fit from config/country_preferences.json, adjusted by remote_policy in that file",
+      "unscored_if": "the posting's country could not be resolved (country_resolution = 'unresolved')",
+      "see": "config/country_preferences.json"
+    },
+    "visa": {
+      "formula": "base = visa_pathway_pk band score for the posting's country (config/country_preferences.json). Then: +20 if the posting explicitly offers sponsorship; set to 0 if the posting explicitly refuses sponsorship. Capped to [0, 100].",
+      "hard_zero_on_explicit_refusal": true,
+      "hard_zero_rationale": "A posting that says it cannot sponsor is unavailable to this candidate regardless of how good the country's general pathway is. It is not filtered out entirely because a refusal detected from text can be wrong - it is scored 0 and the evidence string is shown so the judgement can be checked.",
+      "unscored_if": "the posting's country could not be resolved",
+      "sponsorship_offered_bonus": 20,
+      "score_cap": 100,
+      "explicit_refusal_score": 0
+    },
+    "cv_enhancement": {
+      "formula": "100 * (count of in-demand skills the posting requires that the candidate does NOT have / cv_enhancement_target), capped at 100",
+      "cv_enhancement_target": 5,
+      "rationale": "Rewards roles that would add genuinely marketable skills. Deliberately a small weight (5%) - a job that teaches a lot but that he cannot get is worth little.",
+      "in_demand_skills_source": "config/skill_synonyms.json entries flagged in_demand: true",
+      "unscored_if": "the posting requires no recognisable skills"
+    },
+    "company_quality": {
+      "formula": "mean of the available sub-signals below, each 0-100",
+      "sub_signals": {
+        "posting_completeness": {
+          "formula": "100 if description length >= 1500 chars; else 100 * (length / 1500)",
+          "rationale": "A detailed posting correlates with a company that has actually defined the role.",
+          "full_marks_chars": 1500
+        },
+        "pay_transparency": {
+          "formula": "100 if the posting discloses a salary, else 0",
+          "rationale": "Disclosing pay is an observable, verifiable behaviour."
+        },
+        "hiring_scale": {
+          "formula": "100 * min(1, open_postings_from_this_company_in_our_db / 25)",
+          "rationale": "Number of concurrently open roles, counted from data actually ingested. A proxy for whether the company is hiring actively.",
+          "full_marks_open_roles": 25
+        }
+      },
+      "HONESTY_NOTE": "This is NOT a company reputation, culture or employee-satisfaction score. Glassdoor and similar review sites are prohibited by Rule 2, and no licensed employer-rating dataset is configured. Every sub-signal above is computed from the posting data already in the database, and the component is labelled 'observable posting signals' everywhere it is displayed. Do not present it to anyone as a measure of what the company is like to work for.",
+      "unscored_if": "never - all three sub-signals are always computable"
+    }
+  },
+  "confidence": {
+    "high": "0 unscored components",
+    "medium": "1-2 unscored components",
+    "low": "3+ unscored components",
+    "display_rule": "Confidence must be shown next to every total score. A 78/100 built from six components is not the same claim as a 78/100 built from nine."
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "_comment": [
+    "What excludes a reader from a posting, as opposed to what merely scores",
+    "against them. Every entry here decides whether an opportunity is SOFT-HIDDEN",
+    "with a reason, so each one is a judgement about how much a stated demand",
+    "really excludes somebody — not a fact. They live in config so the judgement",
+    "is visible, editable and fingerprinted onto the assessments it produced."
+  ],
+
+  "qualification": {
+    "blocking_levels": ["phd"],
+    "basis": [
+      "Only a doctorate demand excludes. A Master's requirement is a scored",
+      "shortfall on the education component instead, because employers routinely",
+      "accept equivalent experience against it.",
+      "Measured over the 4,402-posting corpus: 1,134 postings state a bachelor's,",
+      "396 a Master's, 326 a PhD and 61 a diploma. Treating a Master's demand as",
+      "an exclusion would soft-hide those 396 postings — 9% of the corpus — from",
+      "a bachelor holder who could in practice be hired into many of them."
+    ]
+  },
+
+  "right_to_work": {
+    "residence_counts": true,
+    "basis": [
+      "A user living in the posting's country is not blocked by a refusal to",
+      "sponsor. The assumption can be wrong — a residence permit need not carry",
+      "work rights — and it is stated on the finding when it is used.",
+      "It errs toward showing the role: the opposite error hides a job the person",
+      "is entitled to hold, and they cannot ask about a posting they never saw."
+    ]
+  },
+
+  "language": {
+    "block_on_named_language": true,
+    "basis": [
+      "A named language the user has not confirmed blocks. A fluency demand whose",
+      "language could not be read does NOT: it is reported unscored, because",
+      "guessing which language would hide a role over one the user may speak.",
+      "Measured: 436 corpus postings demand English, 148 German, 38 Japanese, 37",
+      "French, and none demands fluency without naming a readable language."
+    ]
+  },
+
+  "security_clearance": {
+    "requires_citizenship_of_issuing_country": true,
+    "basis": [
+      "A national clearance is issued only to citizens of the issuing country, so",
+      "a non-citizen is excluded regardless of fit. Holding the clearance is a",
+      "separate question the finding says is still open for a citizen."
+    ]
+  }
+}

@@ -1,0 +1,488 @@
+{
+  "_meta": {
+    "purpose": "Deterministic country-fit scoring for a Pakistani-national Industrial Engineer. Feeds the Location/Remote (5%) and Visa (5%) components of the Phase 3 match score.",
+    "derived_from_user_instruction": "We have to consider whole world but best will be English spoken countries or countries where English language can enough to live and have good Muslim majority to survive.",
+    "declared_at": "2026-08-08",
+    "scope_rule": "WORLDWIDE. No country is filtered out by this file. Every value here is a RANKING bonus, never an exclusion. A strong role in a low-scoring country still appears in results; it simply scores lower on 10% of the total.",
+    "version": "0.1.0",
+
+    "IMPORTANT_DATA_PROVENANCE_NOTICE": {
+      "what_is_factual": "Country names, ISO codes, aliases and major cities are factual reference data.",
+      "what_is_a_judgement": "The three band assignments (english_usability, muslim_life, visa_pathway_pk) are BUILD-ASSIGNED JUDGEMENTS, not measured facts. They are recorded as named bands with a stated basis so they are auditable and arguable, rather than as invented precise percentages.",
+      "what_was_deliberately_left_null": "Exact Muslim-population percentages are null everywhere. Writing precise figures from memory is exactly the fabrication Rule 1 forbids. Run scripts/load_pew_religion_data.py with a real Pew Research dataset to populate muslim_population_pct properly.",
+      "verification_status": "visa_pathway_pk.verified_against_official_source is false for every country. Immigration rules change frequently and none of these were checked against the official portal during this build. Each entry carries official_source_url so it can be confirmed before you rely on it.",
+      "how_to_challenge_a_score": "Every band maps to a number in scoring_model.bands. Change a band or a band weight in this file and every affected score changes; nothing is hardcoded in Python."
+    }
+  },
+
+  "scoring_model": {
+    "formula": "country_fit = (english_usability_score * w_english) + (muslim_life_score * w_muslim) + (visa_pathway_score * w_visa)",
+    "weights": {
+      "w_english": 0.40,
+      "w_muslim": 0.35,
+      "w_visa": 0.25
+    },
+    "weights_rationale": "English is weighted highest because it is the precondition the user named first and it gates both work and daily life. Muslim-community practicality is a close second per the user's 'good Muslim majority to survive'. Visa pathway is weighted lowest of the three not because it matters least, but because it is the most volatile and least verified input here - it should not dominate a ranking built on unconfirmed data.",
+    "output_range": [0, 100],
+
+    "bands": {
+      "english_usability": {
+        "native_official": { "score": 100, "definition": "English is an official language and the ordinary language of daily life and work." },
+        "working_language": { "score": 90, "definition": "English is not the majority home language, but it is the de-facto language of business, professional workplaces and expatriate life. An engineer can work and live without the local language." },
+        "widely_used_secondary": { "score": 75, "definition": "English is common in professional and urban settings; local language helps but is not required for a multinational workplace." },
+        "high_proficiency_non_official": { "score": 60, "definition": "High general English proficiency; many employers run in English, but daily bureaucracy and social life expect the local language." },
+        "limited": { "score": 30, "definition": "English rarely sufficient outside specific multinational teams; local language effectively required." },
+        "minimal": { "score": 10, "definition": "English of little practical use for work or living." }
+      },
+      "muslim_life": {
+        "muslim_majority": { "score": 100, "definition": "Muslim-majority country. Mosques, halal food, prayer accommodation and Islamic holidays are the societal default." },
+        "large_established_minority": { "score": 75, "definition": "Large, long-settled Muslim community. Halal food and mosques are readily available in most cities; workplace prayer accommodation is common and usually uncontroversial." },
+        "established_minority": { "score": 55, "definition": "Recognised Muslim community concentrated in major cities. Halal food and mosques available in urban centres; may be limited in smaller towns and regional areas." },
+        "small_minority": { "score": 30, "definition": "Small Muslim population. Halal food and mosques exist in capitals and largest cities only; practice requires planning." },
+        "minimal": { "score": 10, "definition": "Very small or negligible Muslim community; little to no halal or mosque infrastructure." }
+      },
+      "visa_pathway_pk": {
+        "employer_sponsored_routine": { "score": 95, "definition": "Employer-sponsored work visas for Pakistani nationals are routine, high-volume and comparatively fast. Large existing Pakistani workforce." },
+        "points_based_available": { "score": 80, "definition": "An open skilled-migration route exists that a Pakistani engineer can use without a job offer, subject to a skills assessment and a valid English test." },
+        "employer_sponsored_available": { "score": 70, "definition": "A functioning employer-sponsored route exists, but requires a licensed/registered sponsor and is more selective." },
+        "employer_sponsored_competitive": { "score": 45, "definition": "A route exists but is capped, lottery-based or heavily oversubscribed." },
+        "employer_sponsored_hard": { "score": 25, "definition": "Legally possible but rare in practice for this profile." },
+        "restricted": { "score": 10, "definition": "Effectively closed to a Pakistani national in this occupation." },
+        "not_applicable_home": { "score": 100, "definition": "Home country - unrestricted right to work." }
+      }
+    }
+  },
+
+  "countries": [
+    {
+      "code": "AE", "name": "United Arab Emirates",
+      "aliases": ["UAE", "U.A.E.", "Emirates", "United Arab Emirates"],
+      "major_cities": ["Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Ras Al Khaimah", "Fujairah", "Jebel Ali"],
+      "english_usability": { "band": "working_language", "basis": "English is the working language of the private sector and of most multinational and industrial employers." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Islam is the state religion." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_routine", "basis": "Large established Pakistani expatriate workforce; employment visa is issued on the basis of an employer offer.", "official_source_url": "https://u.ae/en/information-and-services/visa-and-emirates-id", "verified_against_official_source": false },
+      "notes": "Strongest overall fit on this model: manufacturing, logistics and free-zone industrial employers, no English test required, and Islamic practice is the default. Jebel Ali/KIZAD are relevant industrial clusters for an IE."
+    },
+    {
+      "code": "SA", "name": "Saudi Arabia",
+      "aliases": ["KSA", "Kingdom of Saudi Arabia", "Saudi"],
+      "major_cities": ["Riyadh", "Jeddah", "Dammam", "Khobar", "Jubail", "Yanbu", "NEOM", "Mecca", "Medina", "King Abdullah Economic City", "KAEC", "Dhahran", "Al Khobar", "Tabuk", "Abha", "Taif", "Hail", "Buraydah", "Ras Al Khair", "Rabigh"],
+      "english_usability": { "band": "working_language", "basis": "English is standard in engineering and multinational workplaces; Arabic is more present in daily life than in the UAE." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Islam is the state religion." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_routine", "basis": "Employer-sponsored work visa with a large existing Pakistani workforce.", "official_source_url": "https://www.my.gov.sa/wps/portal/snp/eParticipation/eParticipationTopics", "verified_against_official_source": false },
+      "notes": "Vision 2030 industrial and localisation programmes have created substantial demand for industrial/manufacturing engineers. Jubail and Yanbu are major industrial cities."
+    },
+    {
+      "code": "QA", "name": "Qatar",
+      "aliases": ["State of Qatar"],
+      "major_cities": ["Doha", "Al Rayyan", "Al Wakrah", "Ras Laffan", "Mesaieed"],
+      "english_usability": { "band": "working_language", "basis": "English is the business language; very high expatriate share of the workforce." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Islam is the state religion." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_routine", "basis": "Employer-sponsored work visa; large Pakistani workforce.", "official_source_url": "https://portal.moi.gov.qa/", "verified_against_official_source": false },
+      "notes": "Industrial base concentrated in energy and petrochemicals (Ras Laffan, Mesaieed) rather than light manufacturing."
+    },
+    {
+      "code": "OM", "name": "Oman", "aliases": ["Sultanate of Oman"],
+      "major_cities": ["Muscat", "Sohar", "Salalah", "Duqm"],
+      "english_usability": { "band": "working_language", "basis": "English widely used in business and engineering." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Islam is the state religion." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_routine", "basis": "Employer-sponsored work visa; Omanisation quotas restrict some roles.", "official_source_url": "https://www.rop.gov.om/english/", "verified_against_official_source": false },
+      "notes": "Sohar and Duqm are growing industrial/free-zone clusters. Omanisation policy can limit expatriate hiring in some job families."
+    },
+    {
+      "code": "BH", "name": "Bahrain", "aliases": ["Kingdom of Bahrain"],
+      "major_cities": ["Manama", "Riffa", "Muharraq", "Hidd"],
+      "english_usability": { "band": "working_language", "basis": "English widely used in business." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Islam is the state religion." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_routine", "basis": "Employer-sponsored work visa via LMRA.", "official_source_url": "https://lmra.gov.bh/en", "verified_against_official_source": false },
+      "notes": "Smaller market; aluminium (Alba) and manufacturing presence relevant to an IE."
+    },
+    {
+      "code": "KW", "name": "Kuwait", "aliases": ["State of Kuwait"],
+      "major_cities": ["Kuwait City", "Al Ahmadi", "Hawalli", "Shuaiba"],
+      "english_usability": { "band": "working_language", "basis": "English used in business and engineering settings." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Islam is the state religion." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_routine", "basis": "Employer-sponsored work permit.", "official_source_url": "https://www.moi.gov.kw/", "verified_against_official_source": false },
+      "notes": "Periodic expatriate quota policy changes have at times affected specific nationalities and age bands - confirm current rules before applying."
+    },
+    {
+      "code": "MY", "name": "Malaysia", "aliases": ["MYS"],
+      "major_cities": ["Kuala Lumpur", "Penang", "Johor Bahru", "Shah Alam", "Cyberjaya", "Iskandar Puteri"],
+      "english_usability": { "band": "working_language", "basis": "English is widely spoken and is the default language of multinational and manufacturing workplaces." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Islam is the official religion; halal certification infrastructure is among the most developed in the world." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Employment Pass sponsored by the employer, tiered by salary.", "official_source_url": "https://esd.imi.gov.my/portal/", "verified_against_official_source": false },
+      "notes": "Very strong practical fit: large electronics and manufacturing base (Penang free industrial zone), English-sufficient, Muslim-majority, and a lower cost of living than the GCC. High-value target for this candidate."
+    },
+    {
+      "code": "BN", "name": "Brunei", "aliases": ["Brunei Darussalam"],
+      "major_cities": ["Bandar Seri Begawan", "Kuala Belait"],
+      "english_usability": { "band": "working_language", "basis": "English is widely used in government and business." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Islam is the state religion." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Employer-sponsored labour licence and employment pass.", "official_source_url": "https://www.immigration.gov.bn/", "verified_against_official_source": false },
+      "notes": "Very small labour market; limited industrial-engineering demand outside oil and gas."
+    },
+    {
+      "code": "TR", "name": "Turkey", "aliases": ["Turkiye", "Türkiye", "TUR"],
+      "major_cities": ["Istanbul", "Ankara", "Izmir", "Bursa", "Gaziantep", "Kocaeli"],
+      "english_usability": { "band": "limited", "basis": "Turkish is required for most workplaces and for daily life; English is confined to some multinational teams." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Overwhelmingly Muslim population." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Work permit applied for by the employer to the Ministry of Labour.", "official_source_url": "https://www.csgb.gov.tr/", "verified_against_official_source": false },
+      "notes": "Large textile and automotive manufacturing base that matches this candidate's sector experience well - but the language barrier is the binding constraint, not the industry fit."
+    },
+    {
+      "code": "GB", "name": "United Kingdom",
+      "aliases": ["UK", "Britain", "Great Britain", "England", "Scotland", "Wales", "Northern Ireland", "United Kingdom of Great Britain and Northern Ireland"],
+      "major_cities": ["London", "Manchester", "Birmingham", "Leeds", "Glasgow", "Bristol", "Sheffield", "Coventry", "Derby", "Edinburgh", "Liverpool", "Newcastle", "Nottingham", "Cardiff", "Belfast", "Cambridge", "Oxford", "Reading", "Bradford", "Luton"],
+      "regions": ["Greater London", "West Midlands", "Yorkshire", "Lancashire", "Merseyside", "Surrey", "Kent", "Essex", "Hampshire", "Berkshire", "Oxfordshire", "Cambridgeshire"],
+      "english_usability": { "band": "native_official", "basis": "English is the national language." },
+      "muslim_life": { "band": "large_established_minority", "basis": "Large, long-settled Muslim population including a very large Pakistani-heritage community; extensive mosque and halal infrastructure, particularly in the Midlands and northern cities." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Skilled Worker visa requires a Home Office licensed sponsor plus salary and English requirements.", "official_source_url": "https://www.gov.uk/skilled-worker-visa", "verified_against_official_source": false },
+      "notes": "Best cultural-practicality fit outside the Muslim world for this candidate specifically, given the size of the Pakistani community. Constraint is that the employer must hold a sponsor licence. English requirement may be satisfiable via UK ENIC confirmation that the degree was taught in English - see master_cv x_open_questions.Q2."
+    },
+    {
+      "code": "CA", "name": "Canada", "aliases": ["CAN"],
+      "major_cities": ["Toronto", "Mississauga", "Brampton", "Montreal", "Vancouver", "Calgary", "Edmonton", "Ottawa", "Waterloo", "Windsor", "Winnipeg", "Halifax", "Quebec City", "Kitchener", "Hamilton Ontario", "Burnaby"],
+      "regions": ["Ontario", "Quebec", "British Columbia", "Alberta", "Manitoba", "Saskatchewan", "Nova Scotia", "New Brunswick", "Newfoundland"],
+      "english_usability": { "band": "native_official", "basis": "English is an official language (French in Quebec)." },
+      "muslim_life": { "band": "established_minority", "basis": "Well-established Muslim community concentrated in the Greater Toronto Area, Montreal and Calgary, with strong halal and mosque infrastructure in those metros." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "points_based_available", "basis": "Express Entry allows application without a job offer; requires an Educational Credential Assessment and a valid language test.", "official_source_url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry.html", "verified_against_official_source": false },
+      "notes": "Route is open WITHOUT an employer, which is rare and valuable - but it is currently blocked for this candidate by the expired PTE score. Note Express Entry accepts IELTS General/CELPIP/PTE Core, not PTE Academic."
+    },
+    {
+      "code": "AU", "name": "Australia", "aliases": ["AUS"],
+      "major_cities": ["Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Canberra", "Geelong", "Newcastle NSW", "Gold Coast", "Wollongong", "Hobart", "Darwin"],
+      "regions": ["New South Wales", "Victoria", "Queensland", "Western Australia", "South Australia", "Tasmania", "Northern Territory", "Australian Capital Territory"],
+      "english_usability": { "band": "native_official", "basis": "English is the national language." },
+      "muslim_life": { "band": "established_minority", "basis": "Established Muslim community in western Sydney and Melbourne with good halal and mosque access; thinner in regional areas where some skilled visas require you to live." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "points_based_available", "basis": "Skilled migration (189/190/491) requires an Engineers Australia skills assessment and a valid English test.", "official_source_url": "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing", "verified_against_official_source": false },
+      "notes": "The candidate has already drafted a Competency Demonstration Report and a cover letter addressed to Engineers Australia, so this is his own declared target. His Washington Accord degree supports the assessment. Blocked today by the expired PTE - and note the CDR currently contains an unverified 35% claim that must be resolved first."
+    },
+    {
+      "code": "NZ", "name": "New Zealand", "aliases": ["NZL", "Aotearoa"],
+      "major_cities": ["Auckland", "Wellington", "Christchurch", "Hamilton", "Tauranga"],
+      "english_usability": { "band": "native_official", "basis": "English is the national language." },
+      "muslim_life": { "band": "established_minority", "basis": "Small but established community, concentrated in Auckland." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "points_based_available", "basis": "Skilled Migrant Category plus Accredited Employer Work Visa.", "official_source_url": "https://www.immigration.govt.nz/", "verified_against_official_source": false },
+      "notes": "Smaller manufacturing base than Australia; fewer industrial-engineering openings overall."
+    },
+    {
+      "code": "IE", "name": "Ireland", "aliases": ["IRL", "Republic of Ireland", "Eire"],
+      "major_cities": ["Dublin", "Cork", "Limerick", "Galway", "Waterford"],
+      "english_usability": { "band": "native_official", "basis": "English is the everyday language." },
+      "muslim_life": { "band": "established_minority", "basis": "Growing community concentrated in Dublin." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Critical Skills Employment Permit; engineering occupations have appeared on the critical skills list.", "official_source_url": "https://enterprise.gov.ie/en/what-we-do/workplace-and-skills/employment-permits/", "verified_against_official_source": false },
+      "notes": "Strong medical-device and pharmaceutical manufacturing sector in Cork, Limerick and Galway - a good match for process/industrial engineering."
+    },
+    {
+      "code": "SG", "name": "Singapore", "aliases": ["SGP"],
+      "major_cities": ["Singapore", "Jurong", "Tuas"],
+      "english_usability": { "band": "native_official", "basis": "English is the language of administration, business and education." },
+      "muslim_life": { "band": "large_established_minority", "basis": "Malay-Muslim community is a recognised constitutional minority; halal certification (MUIS) and mosques are systematically available." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Employment Pass, salary-threshold and COMPASS points based.", "official_source_url": "https://www.mom.gov.sg/passes-and-permits/employment-pass", "verified_against_official_source": false },
+      "notes": "Excellent practical fit on language and religious infrastructure. Jurong/Tuas host substantial precision manufacturing. Employment Pass salary thresholds are the main barrier at this experience level."
+    },
+    {
+      "code": "US", "name": "United States", "aliases": ["USA", "U.S.", "U.S.A.", "United States of America", "America"],
+      "major_cities": ["New York", "Chicago", "Houston", "Dallas", "Atlanta", "Detroit", "Seattle", "San Francisco", "Los Angeles", "Austin", "Boston", "Denver", "Phoenix", "Philadelphia", "San Diego", "San Jose", "Portland", "Nashville", "Charlotte", "Columbus", "Minneapolis", "Pittsburgh", "Salt Lake City", "Raleigh", "Kansas City", "Bethesda", "Mountain View", "Palo Alto", "Sunnyvale", "Redmond", "Cambridge MA", "Arlington VA", "Reno", "Fremont", "Torrance", "Casa Grande"],
+      "regions": ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York State", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington State", "West Virginia", "Wisconsin", "Wyoming", "District of Columbia", "Washington DC", "Bay Area"],
+      "english_usability": { "band": "native_official", "basis": "English is the everyday language." },
+      "muslim_life": { "band": "established_minority", "basis": "Large absolute Muslim population with strong infrastructure in specific metros (Detroit/Dearborn, Chicago, New York/New Jersey, Houston); variable elsewhere." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_competitive", "basis": "H-1B is capped and allocated by lottery; employer must sponsor.", "official_source_url": "https://www.uscis.gov/working-in-the-united-states", "verified_against_official_source": false },
+      "notes": "Largest volume of industrial-engineering roles in the world, but the visa lottery makes it low-probability without an employer already committed to sponsoring. Most US postings from the Greenhouse/Lever feeds will be unavailable in practice - the Phase 3 visa sub-score reflects this rather than hiding it."
+    },
+    {
+      "code": "DE", "name": "Germany", "aliases": ["DEU", "Deutschland"],
+      "major_cities": ["Berlin", "Munich", "Hamburg", "Frankfurt", "Stuttgart", "Cologne", "Dusseldorf", "Wolfsburg", "Ingolstadt", "Muenchen", "Koeln", "Nuremberg", "Nurnberg", "Leipzig", "Dresden", "Hannover", "Bremen", "Essen", "Dortmund", "Mannheim", "Karlsruhe", "Augsburg", "Mainz", "Bonn", "Heidelberg", "Dossenheim", "Chemnitz", "Duisburg", "Bochum", "Wuppertal", "Bielefeld", "Munster", "Muenster", "Aachen", "Braunschweig", "Kiel", "Halle", "Magdeburg", "Freiburg", "Krefeld", "Lubeck", "Luebeck", "Erfurt", "Rostock", "Kassel", "Potsdam", "Saarbrucken", "Saarbruecken", "Ludwigshafen", "Oldenburg", "Osnabruck", "Osnabrueck", "Regensburg", "Ingolstadt", "Wurzburg", "Wuerzburg", "Ulm", "Heilbronn", "Pforzheim", "Wolfsburg", "Gottingen", "Goettingen", "Bottrop", "Reutlingen", "Koblenz", "Bergisch Gladbach", "Jena", "Remscheid", "Trier", "Salzgitter", "Cottbus", "Gera", "Hildesheim", "Zwickau", "Kaiserslautern", "Sindelfingen", "Boblingen", "Boeblingen", "Friedrichshafen", "Esslingen", "Ludwigsburg", "Tubingen", "Tuebingen", "Konstanz", "Bamberg", "Bayreuth", "Landshut", "Rosenheim", "Fürth", "Fuerth", "Erlangen", "Schweinfurt", "Neuss", "Leverkusen", "Solingen", "Herne", "Hagen", "Hamm", "Mulheim", "Muelheim", "Moers", "Siegen", "Paderborn", "Darmstadt", "Offenbach", "Hanau", "Wiesbaden", "Giessen", "Fulda", "Marburg", "Lüneburg", "Lueneburg", "Celle", "Delmenhorst", "Wilhelmshaven", "Flensburg", "Neumunster", "Neumuenster"],
+      "regions": ["Bavaria", "Bayern", "Baden-Wurttemberg", "Baden-Wuerttemberg", "North Rhine-Westphalia", "Nordrhein-Westfalen", "Hesse", "Hessen", "Lower Saxony", "Niedersachsen", "Saxony", "Sachsen", "Rhineland-Palatinate", "Schleswig-Holstein", "Brandenburg", "Thuringia"],
+      "english_usability": { "band": "high_proficiency_non_official", "basis": "Many engineering employers operate in English, but German is usually expected on the shop floor and for daily administration." },
+      "muslim_life": { "band": "large_established_minority", "basis": "Large, long-settled Muslim population; mosques and halal food widely available in cities." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "EU Blue Card for degree-holders meeting a salary threshold; Opportunity Card (Chancenkarte) allows job-seeking entry on a points basis.", "official_source_url": "https://www.make-it-in-germany.com/en/", "verified_against_official_source": false },
+      "notes": "Europe's largest manufacturing economy and the best industrial-engineering job density on the continent. The Arbeitnow API in this pipeline is Germany-focused and flags visa-sponsoring roles, so this market is well covered by the automated feed. German language is the practical constraint."
+    },
+    {
+      "code": "NL", "name": "Netherlands", "aliases": ["NLD", "Holland"],
+      "major_cities": ["Amsterdam", "Rotterdam", "Eindhoven", "Utrecht", "The Hague", "Tilburg"],
+      "english_usability": { "band": "high_proficiency_non_official", "basis": "Among the highest non-native English proficiency in the world; many workplaces operate fully in English." },
+      "muslim_life": { "band": "large_established_minority", "basis": "Substantial established community; halal and mosques readily available in the major cities." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Highly Skilled Migrant route via an IND-recognised sponsor.", "official_source_url": "https://ind.nl/en", "verified_against_official_source": false },
+      "notes": "Eindhoven (Brainport) is a strong high-tech manufacturing cluster. English-friendly workplaces make this one of the better non-English-speaking options."
+    },
+    {
+      "code": "SE", "name": "Sweden", "aliases": ["SWE"],
+      "major_cities": ["Stockholm", "Gothenburg", "Malmo", "Vasteras"],
+      "english_usability": { "band": "high_proficiency_non_official", "basis": "Very high English proficiency; many technical workplaces run in English." },
+      "muslim_life": { "band": "large_established_minority", "basis": "Substantial community in Stockholm, Gothenburg and Malmo." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Work permit tied to an offer meeting collective-agreement terms.", "official_source_url": "https://www.migrationsverket.se/English/", "verified_against_official_source": false },
+      "notes": "Automotive and industrial manufacturing (Volvo, Scania, ABB) relevant to this profile."
+    },
+    {
+      "code": "DK", "name": "Denmark", "aliases": ["DNK"],
+      "major_cities": ["Copenhagen", "Aarhus", "Odense", "Aalborg"],
+      "english_usability": { "band": "high_proficiency_non_official", "basis": "Very high English proficiency." },
+      "muslim_life": { "band": "established_minority", "basis": "Established community concentrated in Copenhagen and Aarhus." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Pay Limit Scheme and Positive List routes.", "official_source_url": "https://www.nyidanmark.dk/en-GB", "verified_against_official_source": false },
+      "notes": ""
+    },
+    {
+      "code": "NO", "name": "Norway", "aliases": ["NOR"],
+      "major_cities": ["Oslo", "Bergen", "Stavanger", "Trondheim"],
+      "english_usability": { "band": "high_proficiency_non_official", "basis": "Very high English proficiency." },
+      "muslim_life": { "band": "established_minority", "basis": "Established community, including a notable Pakistani-heritage population in Oslo." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Skilled worker residence permit.", "official_source_url": "https://www.udi.no/en/", "verified_against_official_source": false },
+      "notes": "Oslo has one of Europe's older Pakistani diaspora communities."
+    },
+    {
+      "code": "FI", "name": "Finland", "aliases": ["FIN"],
+      "major_cities": ["Helsinki", "Espoo", "Tampere", "Turku"],
+      "english_usability": { "band": "high_proficiency_non_official", "basis": "High English proficiency in professional settings." },
+      "muslim_life": { "band": "small_minority", "basis": "Small community concentrated in Helsinki." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Residence permit for an employed person; specialist route available.", "official_source_url": "https://migri.fi/en/home", "verified_against_official_source": false },
+      "notes": ""
+    },
+    {
+      "code": "BE", "name": "Belgium", "aliases": ["BEL"],
+      "major_cities": ["Brussels", "Antwerp", "Ghent", "Leuven"],
+      "english_usability": { "band": "high_proficiency_non_official", "basis": "English common in international workplaces; Dutch or French expected otherwise." },
+      "muslim_life": { "band": "large_established_minority", "basis": "Large established community in Brussels and Antwerp." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Single Permit / EU Blue Card.", "official_source_url": "https://dofi.ibz.be/en", "verified_against_official_source": false },
+      "notes": ""
+    },
+    {
+      "code": "AT", "name": "Austria", "aliases": ["AUT"],
+      "major_cities": ["Vienna", "Graz", "Linz", "Salzburg"],
+      "english_usability": { "band": "high_proficiency_non_official", "basis": "English used in multinationals; German expected generally." },
+      "muslim_life": { "band": "large_established_minority", "basis": "Large established community in Vienna." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Red-White-Red Card points system.", "official_source_url": "https://www.migration.gv.at/en/", "verified_against_official_source": false },
+      "notes": ""
+    },
+    {
+      "code": "CH", "name": "Switzerland", "aliases": ["CHE"],
+      "major_cities": ["Zurich", "Geneva", "Basel", "Bern", "Lausanne"],
+      "english_usability": { "band": "high_proficiency_non_official", "basis": "English common in multinationals; German/French/Italian by region otherwise." },
+      "muslim_life": { "band": "large_established_minority", "basis": "Established community, largely of Balkan and Turkish heritage." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_competitive", "basis": "Third-country nationals face strict annual quotas and a labour-market priority test.", "official_source_url": "https://www.sem.admin.ch/sem/en/home.html", "verified_against_official_source": false },
+      "notes": "High pay, but third-country quotas make this genuinely difficult without an employer determined to sponsor."
+    },
+    {
+      "code": "PL", "name": "Poland", "aliases": ["POL"],
+      "major_cities": ["Warsaw", "Krakow", "Wroclaw", "Poznan", "Gdansk", "Lodz"],
+      "english_usability": { "band": "high_proficiency_non_official", "basis": "English common in shared-service and multinational engineering centres." },
+      "muslim_life": { "band": "small_minority", "basis": "Very small Muslim population; limited halal and mosque infrastructure outside Warsaw." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Work permit plus national visa, employer-initiated.", "official_source_url": "https://www.gov.pl/web/udsc-en", "verified_against_official_source": false },
+      "notes": "Growing manufacturing and shared-services base; comparatively accessible work permits, but weak on the religious-practicality criterion."
+    },
+    {
+      "code": "PT", "name": "Portugal", "aliases": ["PRT"],
+      "major_cities": ["Lisbon", "Porto", "Braga"],
+      "english_usability": { "band": "high_proficiency_non_official", "basis": "Good English proficiency in professional settings." },
+      "muslim_life": { "band": "small_minority", "basis": "Small community concentrated in Lisbon." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Work visa / job-seeker visa routes.", "official_source_url": "https://imigrante.sef.pt/en/", "verified_against_official_source": false },
+      "notes": ""
+    },
+    {
+      "code": "ES", "name": "Spain", "aliases": ["ESP"],
+      "major_cities": ["Madrid", "Barcelona", "Valencia", "Seville", "Zaragoza"],
+      "english_usability": { "band": "limited", "basis": "Spanish generally required for workplace and daily life." },
+      "muslim_life": { "band": "established_minority", "basis": "Established community, largely of Moroccan heritage." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Highly qualified professional and general work authorisation routes.", "official_source_url": "https://extranjeros.inclusion.gob.es/", "verified_against_official_source": false },
+      "notes": ""
+    },
+    {
+      "code": "FR", "name": "France", "aliases": ["FRA"],
+      "major_cities": ["Paris", "Lyon", "Toulouse", "Marseille", "Lille", "Nantes"],
+      "english_usability": { "band": "limited", "basis": "French generally required outside a minority of international teams." },
+      "muslim_life": { "band": "large_established_minority", "basis": "Largest Muslim population in Western Europe by absolute number." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Talent Passport and salarie qualifie routes.", "official_source_url": "https://www.france-visas.gouv.fr/en/", "verified_against_official_source": false },
+      "notes": "Note that France's laicite framework places specific restrictions on religious dress and expression in some public-sector and school contexts - worth understanding before prioritising it."
+    },
+    {
+      "code": "IT", "name": "Italy", "aliases": ["ITA"],
+      "major_cities": ["Milan", "Rome", "Turin", "Bologna", "Naples"],
+      "english_usability": { "band": "limited", "basis": "Italian generally required." },
+      "muslim_life": { "band": "established_minority", "basis": "Established community in northern cities." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_competitive", "basis": "Decreto Flussi quota system for non-EU workers.", "official_source_url": "https://www.esteri.it/en/servizi-consolari-e-visti/", "verified_against_official_source": false },
+      "notes": "Strong manufacturing base but the quota-based entry system is restrictive."
+    },
+    {
+      "code": "ZA", "name": "South Africa", "aliases": ["ZAF", "RSA"],
+      "major_cities": ["Johannesburg", "Cape Town", "Durban", "Pretoria", "Port Elizabeth"],
+      "english_usability": { "band": "native_official", "basis": "English is an official language and the language of business." },
+      "muslim_life": { "band": "established_minority", "basis": "Long-established community, notably in Durban and Cape Town, with good halal infrastructure." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Critical Skills and General Work visa routes.", "official_source_url": "http://www.dha.gov.za/", "verified_against_official_source": false },
+      "notes": "Automotive manufacturing base (Port Elizabeth, East London). Consider security and currency factors separately - this model does not score them."
+    },
+    {
+      "code": "MV", "name": "Maldives", "aliases": ["MDV"],
+      "major_cities": ["Male"],
+      "english_usability": { "band": "working_language", "basis": "English widely used in business and tourism." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Islam is the state religion." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Employer-sponsored work permit.", "official_source_url": "https://immigration.gov.mv/", "verified_against_official_source": false },
+      "notes": "Economy is tourism-dominated; very little manufacturing or industrial-engineering demand."
+    },
+    {
+      "code": "ID", "name": "Indonesia", "aliases": ["IDN"],
+      "major_cities": ["Jakarta", "Surabaya", "Bandung", "Batam", "Semarang"],
+      "english_usability": { "band": "widely_used_secondary", "basis": "English used in multinational workplaces; Bahasa Indonesia expected more broadly." },
+      "muslim_life": { "band": "muslim_majority", "basis": "World's largest Muslim population." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "RPTKA/IMTA employer-sponsored work permit; some roles reserved for nationals.", "official_source_url": "https://www.imigrasi.go.id/", "verified_against_official_source": false },
+      "notes": "Very large textile, footwear and electronics manufacturing base directly relevant to this candidate's sector."
+    },
+    {
+      "code": "BD", "name": "Bangladesh", "aliases": ["BGD"],
+      "major_cities": ["Dhaka", "Chittagong", "Gazipur", "Narayanganj"],
+      "english_usability": { "band": "widely_used_secondary", "basis": "English widely used in business and higher education." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Overwhelmingly Muslim population." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "E-visa / work permit via BIDA.", "official_source_url": "https://bida.gov.bd/", "verified_against_official_source": false },
+      "notes": "One of the world's largest garment-manufacturing sectors - an extremely close match to this candidate's actual hosiery/apparel IE experience. Salary levels are the obvious trade-off."
+    },
+    {
+      "code": "EG", "name": "Egypt", "aliases": ["EGY"],
+      "major_cities": ["Cairo", "Alexandria", "Giza", "Port Said"],
+      "english_usability": { "band": "widely_used_secondary", "basis": "English used in multinational and professional settings." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Overwhelmingly Muslim population." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Employer-sponsored work permit.", "official_source_url": "https://www.moiegypt.gov.eg/english/", "verified_against_official_source": false },
+      "notes": ""
+    },
+    {
+      "code": "JO", "name": "Jordan", "aliases": ["JOR"],
+      "major_cities": ["Amman", "Zarqa", "Irbid"],
+      "english_usability": { "band": "widely_used_secondary", "basis": "English common in professional settings." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Overwhelmingly Muslim population." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Employer-sponsored work permit.", "official_source_url": "https://moi.gov.jo/", "verified_against_official_source": false },
+      "notes": "Qualifying Industrial Zones host garment manufacturing relevant to this profile."
+    },
+    {
+      "code": "PK", "name": "Pakistan", "aliases": ["PAK"],
+      "major_cities": ["Karachi", "Lahore", "Faisalabad", "Islamabad", "Rawalpindi", "Sialkot", "Multan", "Bahawalpur"],
+      "english_usability": { "band": "widely_used_secondary", "basis": "English is an official language and the language of higher education and business." },
+      "muslim_life": { "band": "muslim_majority", "basis": "Home country." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "not_applicable_home", "basis": "Citizen - unrestricted right to work.", "official_source_url": null, "verified_against_official_source": true },
+      "notes": "Included so domestic roles score correctly rather than being treated as unknown. Scores highest on visa by definition; the point of the search is opportunities beyond it."
+    },
+    {
+      "code": "IN", "name": "India", "aliases": ["IND"],
+      "major_cities": ["Bangalore", "Mumbai", "Delhi", "Chennai", "Pune", "Hyderabad", "Gurgaon"],
+      "english_usability": { "band": "widely_used_secondary", "basis": "English is widely used in business and engineering." },
+      "muslim_life": { "band": "large_established_minority", "basis": "Very large Muslim population in absolute terms." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "restricted", "basis": "Employment visas for Pakistani nationals are subject to severe bilateral restrictions.", "official_source_url": "https://indianvisaonline.gov.in/", "verified_against_official_source": false },
+      "notes": "Scored low on visa for bilateral reasons, not on merit of the market. Kept in the list so postings there are ranked honestly rather than silently dropped."
+    },
+    {
+      "code": "JP", "name": "Japan", "aliases": ["JPN"],
+      "major_cities": ["Tokyo", "Osaka", "Nagoya", "Yokohama", "Toyota"],
+      "english_usability": { "band": "limited", "basis": "Japanese generally required for manufacturing and shop-floor roles." },
+      "muslim_life": { "band": "small_minority", "basis": "Small community; halal food and prayer facilities limited but growing in major cities." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Engineer/Specialist in Humanities visa; Highly Skilled Professional points system.", "official_source_url": "https://www.isa.go.jp/en/", "verified_against_official_source": false },
+      "notes": "World-leading industrial engineering and lean manufacturing (the origin of the methods this candidate uses), but language is a hard barrier for shop-floor roles."
+    },
+    {
+      "code": "KR", "name": "South Korea", "aliases": ["KOR", "Republic of Korea"],
+      "major_cities": ["Seoul", "Busan", "Incheon", "Ulsan"],
+      "english_usability": { "band": "limited", "basis": "Korean generally required." },
+      "muslim_life": { "band": "minimal", "basis": "Very small Muslim community." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_hard", "basis": "E-7 specially designated activities visa; employer-driven and restrictive.", "official_source_url": "https://www.immigration.go.kr/immigration_eng/index.do", "verified_against_official_source": false },
+      "notes": ""
+    },
+    {
+      "code": "CN", "name": "China", "aliases": ["CHN", "PRC", "People's Republic of China"],
+      "major_cities": ["Shanghai", "Shenzhen", "Beijing", "Guangzhou", "Suzhou", "Dongguan"],
+      "english_usability": { "band": "limited", "basis": "Mandarin generally required outside a minority of multinational roles." },
+      "muslim_life": { "band": "small_minority", "basis": "Muslim population concentrated in specific western regions rather than the industrial east." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Z visa with employer-sponsored work permit, points-classified.", "official_source_url": "http://en.nia.gov.cn/", "verified_against_official_source": false },
+      "notes": "Largest manufacturing base in the world; language and religious-practicality are the constraints on this model."
+    },
+    {
+      "code": "VN", "name": "Vietnam", "aliases": ["VNM", "Viet Nam"],
+      "major_cities": ["Ho Chi Minh City", "Hanoi", "Da Nang", "Binh Duong"],
+      "english_usability": { "band": "limited", "basis": "Vietnamese generally required; English present in some multinationals." },
+      "muslim_life": { "band": "minimal", "basis": "Very small Muslim community." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Employer-sponsored work permit.", "official_source_url": "https://immigration.gov.vn/", "verified_against_official_source": false },
+      "notes": "Major and fast-growing apparel/footwear manufacturing base - close sector match, weak on the other two criteria."
+    },
+    {
+      "code": "TH", "name": "Thailand", "aliases": ["THA"],
+      "major_cities": ["Bangkok", "Chonburi", "Rayong", "Chiang Mai"],
+      "english_usability": { "band": "limited", "basis": "Thai generally required outside multinationals." },
+      "muslim_life": { "band": "small_minority", "basis": "Muslim population concentrated in the southern provinces." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Non-B visa plus work permit; Smart Visa for targeted industries.", "official_source_url": "https://www.immigration.go.th/", "verified_against_official_source": false },
+      "notes": ""
+    },
+    {
+      "code": "MX", "name": "Mexico", "aliases": ["MEX"],
+      "major_cities": ["Monterrey", "Guadalajara", "Mexico City", "Queretaro", "Tijuana", "Juarez"],
+      "english_usability": { "band": "limited", "basis": "Spanish generally required." },
+      "muslim_life": { "band": "minimal", "basis": "Very small Muslim community." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Temporary resident visa with work permission, employer-initiated.", "official_source_url": "https://www.inm.gob.mx/", "verified_against_official_source": false },
+      "notes": "Very large maquiladora manufacturing sector - strong sector match, weak on both stated preferences."
+    },
+    {
+      "code": "BR", "name": "Brazil", "aliases": ["BRA"],
+      "major_cities": ["Sao Paulo", "Rio de Janeiro", "Curitiba", "Belo Horizonte"],
+      "english_usability": { "band": "limited", "basis": "Portuguese generally required." },
+      "muslim_life": { "band": "small_minority", "basis": "Small established community, notably in Sao Paulo." },
+      "muslim_population_pct": null,
+      "visa_pathway_pk": { "band": "employer_sponsored_available", "basis": "Employer-sponsored work authorisation.", "official_source_url": "https://www.gov.br/mj/pt-br", "verified_against_official_source": false },
+      "notes": ""
+    }
+  ],
+
+  "unknown_country_policy": {
+    "score": null,
+    "behaviour": "If a posting's location cannot be resolved to a country in this list, the country_fit component is recorded as UNSCORED with reason 'country_unresolved'. It is NOT defaulted to zero and NOT defaulted to an average - either would be an invented number. The Phase 3 scorer redistributes the weight and states that it did.",
+    "rationale": "Rule 4: every score must be explainable. An unresolved location cannot be scored, so it is reported as unscored."
+  },
+
+  "remote_policy": {
+    "worldwide_remote": {
+      "treatment": "A genuinely worldwide-remote role is scored on english_usability of the EMPLOYER's country only; muslim_life is scored against Pakistan (the candidate's country of residence) because he would be living there; visa_pathway is scored as not_applicable_home.",
+      "rationale": "Remote work from Pakistan means daily life happens in Pakistan. Scoring such a role on the employer's country's mosque density would be meaningless."
+    },
+    "region_locked_remote": {
+      "treatment": "Scored as if onsite in the required region, because the candidate must be resident there to hold the role."
+    }
+  }
+}

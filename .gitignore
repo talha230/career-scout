@@ -1,6 +1,6 @@
-# Jarvis local data never enters the repository
-.jarvis/
-.jarvis-demo/
+# Career Scout local data never enters the repository
+.career-scout/
+/.career-scout-demo/
 secrets/
 *.token.json
 google_client_secret.json

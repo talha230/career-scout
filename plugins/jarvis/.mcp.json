@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "jarvis": {
-      "command": "uvx",
-      "args": ["--from", "git+https://github.com/talha230/jarvis-plugin@v0.1.1", "jarvis", "mcp"]
-    }
-  }
-}

@@ -1,12 +1,12 @@
 {
-  "name": "jarvis-web",
+  "name": "career-scout-web",
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "The Jarvis web app. Builds into src/jarvis/web/static.",
+  "description": "The Career Scout web app. Builds into src/career_scout/web/static.",
   "scripts": {
-    "dev:jarvis": "vite --config vite.jarvis.config.js",
-    "build:jarvis": "vite build --config vite.jarvis.config.js"
+    "dev:app": "vite --config vite.app.config.js",
+    "build:app": "vite build --config vite.app.config.js"
   },
   "dependencies": {
     "react": "^18.3.1",

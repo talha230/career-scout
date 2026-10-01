@@ -1,0 +1,13 @@
+{
+  "name": "career-scout",
+  "version": "0.2.0",
+  "description": "Local-first job and scholarship agent. Your data stays on your machine; nothing is sent without your approval or your own written rules.",
+  "author": {
+    "name": "Muhammad Talha Yaqoob",
+    "url": "https://github.com/talha230"
+  },
+  "homepage": "https://github.com/talha230/career-scout",
+  "repository": "https://github.com/talha230/career-scout",
+  "license": "MIT",
+  "keywords": ["jobs", "scholarships", "career", "gmail", "local-first"]
+}

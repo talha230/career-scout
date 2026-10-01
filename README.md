@@ -1,4 +1,4 @@
-# Jarvis
+# Career Scout
 
 A local-first job and scholarship agent. It finds opportunities, scores them with arithmetic you can
 check by hand, writes application documents where every line traces to something you actually did,
@@ -33,14 +33,14 @@ You need [uv](https://docs.astral.sh/uv/getting-started/installation/) and Claud
 In Claude Code:
 
 ```
-/plugin marketplace add talha230/jarvis-plugin
-/plugin install jarvis@jarvis-plugin
+/plugin marketplace add talha230/career-scout
+/plugin install career-scout@career-scout
 ```
 
-Then ask Claude to **"set up Jarvis"** (or run `/jarvis:setup`). It installs the `jarvis`
+Then ask Claude to **"set up Career Scout"** (or run `/career-scout:setup`). It installs the `career-scout`
 command, creates your local data folder, imports your CV, and walks you through
 connecting your own Gmail. Everything stays on your computer; the plugin talks to
-Jarvis through a local MCP server.
+Career Scout through a local MCP server.
 
 ### Approval
 
@@ -53,7 +53,7 @@ can change them — the MCP tools refuse.
 ## Install without Claude
 
 ```bash
-uv tool install git+https://github.com/talha230/jarvis-plugin@v0.1.1
+uv tool install git+https://github.com/talha230/career-scout@v0.2.0
 ```
 
 For development, from a clone:
@@ -65,14 +65,14 @@ pip install -e ".[dev]"
 ## First run
 
 ```bash
-jarvis setup            # data directory, country packs, profile import
-jarvis setup google     # your own Google client — once, about eight minutes
-jarvis serve            # the web app at http://localhost:8765, plus the daily run
+career-scout setup            # data directory, country packs, profile import
+career-scout setup google     # your own Google client — once, about eight minutes
+career-scout serve            # the web app at http://localhost:8765, plus the daily run
 ```
 
-`jarvis setup google` tells you exactly which buttons to press, including the one people get wrong:
+`career-scout setup google` tells you exactly which buttons to press, including the one people get wrong:
 **publish your consent screen to "In Production"**. Left in "Testing", Google expires your login
-every seven days and reply tracking stops — which looks exactly like a quiet job market. Jarvis
+every seven days and reply tracking stops — which looks exactly like a quiet job market. Career Scout
 reports an expired or revoked connection as "reconnect your mailbox", never as zero replies.
 
 Then open `http://localhost:8765`. The home screen lists anything still to set up and what breaks
@@ -80,7 +80,7 @@ if you skip it.
 
 ## How an application happens
 
-1. **Discovery** runs daily (or `jarvis run`) against the job sources your country packs name —
+1. **Discovery** runs daily (or `career-scout run`) against the job sources your country packs name —
    public APIs only, through one audited network module that honours `robots.txt` and each source's
    terms.
 2. **Screening and scoring.** Hard filters reject non-vacancies with a stored, reversible reason;
@@ -91,48 +91,48 @@ if you skip it.
    authorises a document.
 4. **Generation.** A CV and letter from confirmed records only, rendered once to DOCX and hashed.
    Unconfirmed values are left out and listed.
-5. **Your approval** — in the web app, one package at a time, **on the computer running Jarvis**
+5. **Your approval** — in the web app, one package at a time, **on the computer running Career Scout**
    (not from a phone on the Wi-Fi). You see every line beside the record behind it, and the full
    destination address.
 6. **Sending** — only if the email channel is switched on in Settings, within your daily caps, from
-   your own Gmail. The thread is labelled `Jarvis/Applied/<company>` and a record of what each line
+   your own Gmail. The thread is labelled `Career Scout/Applied/<company>` and a record of what each line
    claims is written to your Drive.
 7. **Tracking.** Replies in those threads are classified by published rules, correctable, and move
    the application's status with a full history.
 
 Postings without an email address get a **portal worksheet** instead: prefilled answers and the
-link. Jarvis never logs into or submits anything on an employer's site.
+link. Career Scout never logs into or submits anything on an employer's site.
 
 ## Commands
 
 | Command | What it does |
 |---|---|
-| `jarvis setup` / `setup google` / `setup profile` / `setup countries` | Guided first run |
-| `jarvis doctor` | What is configured, missing or stale. Exits non-zero if something is wrong |
-| `jarvis where` | Where your data lives |
-| `jarvis serve` | Web app on port 8765, with the daily pass and Gmail polling. `--certfile/--keyfile` for https (a phone installs the app as a PWA only over https) |
-| `jarvis run` | One full pipeline pass. Sends nothing |
-| `jarvis discover` | Discovery on its own |
-| `jarvis backup` | Encrypted backup, then a restore drill to prove it restores |
-| `jarvis restore <file> --key <backup.key>` | Restore into an empty data directory |
-| `jarvis export <folder>` | Everything in open formats (JSON and your documents) |
-| `jarvis purge --yes` | Destroy the restricted-document key: every copy, in every backup, becomes unreadable |
-| `jarvis mcp` | The MCP server — Claude Code and Codex launch this |
-| `jarvis gen-skill` | Regenerate the Claude Skill from the live tool list |
+| `career-scout setup` / `setup google` / `setup profile` / `setup countries` | Guided first run |
+| `career-scout doctor` | What is configured, missing or stale. Exits non-zero if something is wrong |
+| `career-scout where` | Where your data lives |
+| `career-scout serve` | Web app on port 8765, with the daily pass and Gmail polling. `--certfile/--keyfile` for https (a phone installs the app as a PWA only over https) |
+| `career-scout run` | One full pipeline pass. Sends nothing |
+| `career-scout discover` | Discovery on its own |
+| `career-scout backup` | Encrypted backup, then a restore drill to prove it restores |
+| `career-scout restore <file> --key <backup.key>` | Restore into an empty data directory |
+| `career-scout export <folder>` | Everything in open formats (JSON and your documents) |
+| `career-scout purge --yes` | Destroy the restricted-document key: every copy, in every backup, becomes unreadable |
+| `career-scout mcp` | The MCP server — Claude Code and Codex launch this |
+| `career-scout gen-skill` | Regenerate the Claude Skill from the live tool list |
 
 ## Driving it from Claude Code or Codex
 
 **Claude Code**
 
 ```bash
-claude mcp add jarvis -- jarvis mcp
+claude mcp add career-scout -- career-scout mcp
 ```
 
 **OpenAI Codex** — in `~/.codex/config.toml`:
 
 ```toml
-[mcp_servers.jarvis]
-command = "jarvis"
+[mcp_servers.career-scout]
+command = "career-scout"
 args = ["mcp"]
 ```
 
@@ -146,12 +146,12 @@ descriptions and emails reach it wrapped as untrusted content. See [docs/MCP_SET
 ## Where your data lives
 
 ```
-~/.jarvis/                 (or wherever JARVIS_HOME points)
-├── jarvis.db              SQLite — the system of record
+~/.career-scout/                 (or wherever CAREER_SCOUT_HOME points)
+├── career-scout.db              SQLite — the system of record
 ├── documents/
 │   ├── source/            your uploaded CVs and letters
 │   ├── restricted/        passport, ID, tax, bank — encrypted (AES-256-GCM), never read
-│   └── generated/         what Jarvis produced, rendered once and hashed
+│   └── generated/         what Career Scout produced, rendered once and hashed
 ├── snapshots/             every fetched page, the evidence behind every sourced figure
 ├── credentials/           Google token, data.key, backup.key — locked to your account
 └── backups/
@@ -182,13 +182,13 @@ When something breaks, [docs/RUNBOOK.md](docs/RUNBOOK.md) says what it looks lik
 ## Development
 
 ```bash
-python -m pytest src/jarvis/tests -q && python -m ruff check src/jarvis
-npm run build:jarvis --prefix dashboard      # rebuilds src/jarvis/web/static (committed)
-npm run dev:jarvis --prefix dashboard        # UI dev server on :5174, proxies /api to jarvis serve
+python -m pytest src/career_scout/tests -q && python -m ruff check src/career_scout
+npm run build:app --prefix dashboard      # rebuilds src/career_scout/web/static (committed)
+npm run dev:app --prefix dashboard        # UI dev server on :5174, proxies /api to career-scout serve
 ```
 
 The plan and its 29 never-skipped invariants: [PLAN.md](PLAN.md).
 
 The original single-user pipeline is still in `src/jobfinder/` (83 passing tests) with its measured
 dataset in `data/jobfinder.db` — 4,402 postings. The dataset is the fixture corpus the parsing and
-scoring work is tested against; its behaviours have been ported and re-tested in `src/jarvis/`.
+scoring work is tested against; its behaviours have been ported and re-tested in `src/career_scout/`.

@@ -1,0 +1,82 @@
+{
+  "_meta": {
+    "purpose": "Per-account presentation variants for generated CVs — T043a, T043b.",
+    "version": "0.1.0",
+
+    "the_problem": "Two people using Career Scout should not post two documents that are visibly the same template. A recruiter who sees the identical layout twice learns something about the applicants that is true of the tool, not of them.",
+
+    "presentation_only": "Every dimension below is TYPOGRAPHY AND SPACING. None of them changes a word, a claim, a number, a section's membership or which experience is shown. A variant that changed what the document SAYS would be fabrication wearing a typeface, and the claim trace and QC gate (I-10, I-12) run identically for every variant. If a future dimension cannot be described purely as 'how it looks', it does not belong in this file.",
+
+    "deterministic_not_random": "The variant is derived from the account id by hash, and stored. The same person's second application to the same employer must look like the same person wrote it — a CV that reshuffles itself every render is worse than a shared template, not better.",
+
+    "every_variant_is_ats_safe": "The variation space is deliberately restricted to properties an ATS text extractor cannot see: font, size, spacing, rule weight, bullet glyph, date format and section order. Single column, standard headings, and nothing in headers, footers, text boxes, layout tables or images — those are constant across every variant because they are what makes the document parseable at all (T043).",
+
+    "quality_floor": "Every value in every list is independently defensible. The variant picks between good options; it never trades quality for difference."
+  },
+
+  "justification": {
+    "body_paragraphs": "justify",
+    "bullets": "left",
+    "headings": "left",
+    "hyphenation": false,
+    "rationale": "T043a. Justification is a paragraph property and is invisible to a text extractor, so it changes how the CV reads to a human and nothing about what an ATS parses. Bullets and headings stay left-aligned because justifying a short line stretches its word spacing into visible rivers of whitespace — on a two-line bullet that reads worse, not better. Hyphenation is off: a hyphenated break inside a surname or a tool name is a parsing hazard for the sake of a tidier edge."
+  },
+
+  "dimensions": {
+    "typeface": [
+      { "id": "calibri_cambria", "body": "Calibri", "heading": "Cambria" },
+      { "id": "georgia_georgia", "body": "Georgia", "heading": "Georgia" },
+      { "id": "arial_arial", "body": "Arial", "heading": "Arial" },
+      { "id": "garamond_garamond", "body": "Garamond", "heading": "Garamond" },
+      { "id": "helvetica_georgia", "body": "Helvetica", "heading": "Georgia" },
+      { "id": "times_arial", "body": "Times New Roman", "heading": "Arial" },
+      { "id": "verdana_verdana", "body": "Verdana", "heading": "Verdana" },
+      { "id": "book_antiqua", "body": "Book Antiqua", "heading": "Book Antiqua" }
+    ],
+    "typeface_note": "Core fonts only — present on effectively every Windows and Office install, and metric-stable so a document does not reflow into three pages on the reader's machine. A font the reader lacks is substituted silently and the careful spacing below becomes meaningless.",
+
+    "body_size_pt": [10, 10.5, 11],
+    "heading_size_pt": [12, 13, 14],
+    "name_size_pt": [16, 18, 20],
+    "size_note": "Body below 10pt stops being comfortably readable on paper, and above 11pt pushes a real career onto a third page. The range is narrow on purpose.",
+
+    "line_spacing": [1.0, 1.08, 1.15],
+    "space_after_paragraph_pt": [4, 6, 8],
+    "section_gap_pt": [8, 10, 12],
+
+    "heading_treatment": [
+      { "id": "bold_caps", "bold": true, "all_caps": true, "rule": false },
+      { "id": "bold_caps_rule", "bold": true, "all_caps": true, "rule": true },
+      { "id": "bold_title", "bold": true, "all_caps": false, "rule": false },
+      { "id": "bold_title_rule", "bold": true, "all_caps": false, "rule": true },
+      { "id": "small_caps_rule", "bold": true, "all_caps": false, "small_caps": true, "rule": true }
+    ],
+    "rule_weight_pt": [0.5, 0.75, 1.0],
+
+    "bullet_glyph": ["•", "–", "▪"],
+    "bullet_glyph_note": "Three glyphs that every extractor strips cleanly. Deliberately excludes checkmarks, arrows and emoji: they survive extraction as literal characters and end up inside the parsed text of a responsibility.",
+
+    "date_format": [
+      { "id": "mon_yyyy", "example": "Mar 2021 – Jun 2023" },
+      { "id": "mm_yyyy", "example": "03/2021 – 06/2023" },
+      { "id": "month_yyyy", "example": "March 2021 – June 2023" },
+      { "id": "yyyy_only", "example": "2021 – 2023" }
+    ],
+    "date_format_note": "yyyy_only is offered because it is a real convention, but it loses information. A generator that has month precision should prefer a format that keeps it; this dimension is chosen last and skipped when it would discard detail the profile actually holds.",
+
+    "name_treatment": ["as_written", "upper"],
+    "contact_layout": ["single_line", "two_line"]
+  },
+
+  "section_orders": {
+    "note": "The header is always first and the summary always follows it — a reader decides in the top third of page one, and burying the summary costs more than any variation gains. Only the orderings below are permitted, and each is a convention somebody sensible already uses.",
+    "orders": [
+      ["header", "summary", "key_skills", "experience", "education", "certifications", "projects", "languages"],
+      ["header", "summary", "experience", "key_skills", "education", "certifications", "projects", "languages"],
+      ["header", "summary", "key_skills", "experience", "certifications", "education", "projects", "languages"],
+      ["header", "summary", "experience", "education", "key_skills", "certifications", "projects", "languages"],
+      ["header", "summary", "key_skills", "experience", "education", "projects", "certifications", "languages"]
+    ],
+    "membership_is_fixed": "Every ordering contains exactly the same sections. The variant decides the ORDER; what appears is decided by the profile and the posting, never by the style."
+  }
+}

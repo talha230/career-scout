@@ -1,4 +1,4 @@
-initialize -> server jarvis 0.1.0, protocol 2025-11-25
+initialize -> server career-scout 0.1.0, protocol 2025-11-25
 tools/list -> 28 tools: add_contact, classify_reply_correction, confirm_profile_field, correct_profile_field, draft_reply_response, generate_package, get_allowance, get_application, get_capability_status, get_document_text, get_opportunity, get_package, get_profile_status, get_run_health, get_settings, list_applications, list_documents, list_opportunities, list_profile_records, list_queue, list_replies, propose_profile_field, send_approved_outreach, set_country_enabled, set_profile_field, set_setting, submit_approved_application, suppress_contact
 tools named approve*: none
 tools/call get_profile_status -> MVP satisfied=True, completeness=88.7%

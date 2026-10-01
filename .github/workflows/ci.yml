@@ -22,12 +22,12 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -e ".[dev]"
-      - run: python -m ruff check src/jarvis
-      - run: python -m pytest src/jarvis/tests -q
+      - run: python -m ruff check src/career_scout
+      - run: python -m pytest src/career_scout/tests -q
       # The committed web UI must be the one the source builds.
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
       - run: npm ci --prefix dashboard
-      - run: npm run build:jarvis --prefix dashboard
-      - run: git diff --exit-code -- src/jarvis/web/static || (echo "src/jarvis/web/static is stale; run npm run build:jarvis --prefix dashboard" && exit 1)
+      - run: npm run build:app --prefix dashboard
+      - run: git diff --exit-code -- src/career_scout/web/static || (echo "src/career_scout/web/static is stale; run npm run build:app --prefix dashboard" && exit 1)

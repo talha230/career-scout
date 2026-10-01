@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "career-scout": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/talha230/career-scout@v0.2.0", "career-scout", "mcp"]
+    }
+  }
+}

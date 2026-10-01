@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "jarvis-agent"
-version = "0.1.1"
+name = "career-scout"
+version = "0.2.0"
 description = "Local-first job and scholarship agent with an MCP control surface for Claude Code and OpenAI Codex"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -42,7 +42,7 @@ dependencies = [
     "pdfplumber>=0.11",
     "python-docx>=1.1",
     # Google — only the one-time consent flow. Every API call goes through
-    # jarvis.net (I-08), so google-api-python-client and its httplib2 transport
+    # career_scout.net (I-08), so google-api-python-client and its httplib2 transport
     # are deliberately not dependencies.
     "google-auth-oauthlib>=1.2",
     # Crypto
@@ -59,23 +59,23 @@ dev = [
 ocr = ["pytesseract>=0.3.10", "pillow>=10.3"]
 
 [project.scripts]
-jarvis = "jarvis.cli:app"
+career-scout = "career_scout.cli:app"
 
 [project.urls]
-Homepage = "https://github.com/talha230/jarvis-plugin"
+Homepage = "https://github.com/talha230/career-scout"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/jarvis"]
+packages = ["src/career_scout"]
 
 [tool.pytest.ini_options]
-testpaths = ["src/jarvis/tests"]
+testpaths = ["src/career_scout/tests"]
 pythonpath = ["src"]
 addopts = "-q --strict-markers"
 markers = [
     "invariant: a never-skipped safety invariant; the suite fails if one is skipped",
     "network: requires real network access; excluded by default",
 ]
-filterwarnings = ["error::DeprecationWarning:jarvis.*"]
+filterwarnings = ["error::DeprecationWarning:career-scout.*"]
 
 [tool.ruff]
 line-length = 100
@@ -87,7 +87,7 @@ select = ["E", "F", "I", "B", "UP", "S", "C4", "RET", "SIM"]
 ignore = ["S101"]
 
 [tool.ruff.lint.per-file-ignores]
-"src/jarvis/tests/*" = ["S", "B011"]
+"src/career_scout/tests/*" = ["S", "B011"]
 
 [tool.coverage.run]
-source = ["src/jarvis"]
+source = ["src/career_scout"]

@@ -1,7 +1,7 @@
-# Jarvis runbook
+# Career Scout runbook
 
 Six things actually go wrong. For each: how it shows itself, what to check, and what to do. Every
-one of them is surfaced on the **Health** screen (`/health`) and by `jarvis doctor`; none of them
+one of them is surfaced on the **Health** screen (`/health`) and by `career-scout doctor`; none of them
 fails silently.
 
 ---
@@ -20,7 +20,7 @@ itself is missing — for example after restoring a backup, which deliberately n
 **Do:**
 
 ```bash
-jarvis setup google
+career-scout setup google
 ```
 
 Check the consent screen is published to **In Production** in your Google Cloud project. Approved
@@ -31,14 +31,14 @@ packages stay queued while disconnected; nothing is lost and nothing is sent twi
 **Looks like:** `/health` "Stale: no successful full run in 48 hours" (the `run_staleness_alert_hours`
 setting); the home screen's "Last run" is old.
 
-**Why:** `jarvis serve` was not running at `discovery_schedule_hour`, the computer was asleep, or
+**Why:** `career-scout serve` was not running at `discovery_schedule_hour`, the computer was asleep, or
 every step failed.
 
 **Do:** open `/health` → Runs. A `failed` or `partial` run lists its obstacles with reasons (a
 source down, the Minimum Viable Profile incomplete, the mailbox disconnected). Run one pass by hand:
 
 ```bash
-jarvis run
+career-scout run
 ```
 
 A step that fails is an obstacle; the others still run. If discovery says the Minimum Viable Profile
@@ -49,7 +49,7 @@ is not satisfied, confirm the checklist items on the home screen.
 **Looks like:** `/health` "N send(s) need reconciling"; an application stuck in `sending`.
 
 **Why:** the send was reserved and Gmail was called, but the result was not recorded — the process
-died, or the network dropped mid-request. Gmail has no idempotency key, so Jarvis **cannot know
+died, or the network dropped mid-request. Gmail has no idempotency key, so Career Scout **cannot know
 whether the message left**, and it will **never** send it again on its own.
 
 **Do:** look in Gmail → Sent for the message to that address.
@@ -57,7 +57,7 @@ whether the message left**, and it will **never** send it again on its own.
 - **It is there:** record it (the message id is in Gmail → Show original):
 
   ```bash
-  jarvis reconcile <application id> --message-id <gmail message id>
+  career-scout reconcile <application id> --message-id <gmail message id>
   ```
 
 - **It is not there:** the message did not leave. Record that, then prepare the package again from
@@ -65,7 +65,7 @@ whether the message left**, and it will **never** send it again on its own.
   design:
 
   ```bash
-  jarvis reconcile <application id> --not-sent
+  career-scout reconcile <application id> --not-sent
   ```
 
 ## 4. A source changed shape
@@ -77,7 +77,7 @@ JSON … the page is kept at snapshots/…" or a source suddenly returns 0 items
 is saved under `snapshots/` before parsing, so you can see what arrived.
 
 **Do:** open the snapshot named in the obstacle. If the source moved its URL or changed its fields,
-update `config/v1/sources.json` (or the mapper in `jarvis/discovery/clients.py`) and add the new
+update `config/v1/sources.json` (or the mapper in `career_scout/discovery/clients.py`) and add the new
 payload to `tests/fixtures/source_payloads.json`. The other sources keep working meanwhile.
 
 ## 5. A backup that failed or went stale
@@ -91,7 +91,7 @@ were switched off, or no daily run happened.
 **Do:**
 
 ```bash
-jarvis backup --target <folder you can write to>
+career-scout backup --target <folder you can write to>
 ```
 
 This also runs a restore drill and records the result. Confirm `credentials/backup.key` has a copy
@@ -99,8 +99,8 @@ somewhere off the machine; without it no backup can be restored. To prove a rest
 spare folder:
 
 ```bash
-set JARVIS_HOME=C:\temp\jarvis-restore-test
-jarvis restore <path\to\backup.jvb> --key <path\to\backup.key>
+set CAREER_SCOUT_HOME=C:\temp\career-scout-restore-test
+career-scout restore <path\to\backup.jvb> --key <path\to\backup.key>
 ```
 
 ## 6. A document that would not extract
@@ -112,6 +112,6 @@ or the extraction note explains the failure.
 result. Or the file type is unsupported.
 
 **Do:** upload a text-based version (export the PDF from Word, or a DOCX), or install the optional
-OCR extra (`uv tool install --force "jarvis-agent[ocr] @ git+https://github.com/talha230/jarvis-plugin@v0.1.1"`) and upload again. You can also type the fields
+OCR extra (`uv tool install --force "career-scout[ocr] @ git+https://github.com/talha230/career-scout@v0.2.0"`) and upload again. You can also type the fields
 directly; typed values are marked as typed, never as extracted. Restricted documents (passport, ID,
 tax, bank) are never read at all — that is intentional, not a failure.

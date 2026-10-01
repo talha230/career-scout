@@ -53,7 +53,7 @@ can change them — the MCP tools refuse.
 ## Install without Claude
 
 ```bash
-uv tool install git+https://github.com/talha230/jarvis-plugin@v0.1.0
+uv tool install git+https://github.com/talha230/jarvis-plugin@v0.1.1
 ```
 
 For development, from a clone:

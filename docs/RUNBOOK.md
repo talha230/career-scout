@@ -112,6 +112,6 @@ or the extraction note explains the failure.
 result. Or the file type is unsupported.
 
 **Do:** upload a text-based version (export the PDF from Word, or a DOCX), or install the optional
-OCR extra (`uv tool install --force "jarvis-agent[ocr] @ git+https://github.com/talha230/jarvis-plugin@v0.1.0"`) and upload again. You can also type the fields
+OCR extra (`uv tool install --force "jarvis-agent[ocr] @ git+https://github.com/talha230/jarvis-plugin@v0.1.1"`) and upload again. You can also type the fields
 directly; typed values are marked as typed, never as extracted. Restricted documents (passport, ID,
 tax, bank) are never read at all — that is intentional, not a failure.

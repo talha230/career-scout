@@ -1,6 +1,6 @@
 {
   "name": "jarvis",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local-first job and scholarship agent. Your data stays on your machine; nothing is sent without your approval or your own written rules.",
   "author": {
     "name": "Muhammad Talha Yaqoob",

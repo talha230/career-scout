@@ -27,7 +27,7 @@ an installer yourself. The plugin's MCP server also needs `uv`.
 ## 2. Install the `jarvis` command
 
 ```bash
-uv tool install --force git+https://github.com/talha230/jarvis-plugin@v0.1.0
+uv tool install --force git+https://github.com/talha230/jarvis-plugin@v0.1.1
 ```
 
 Then confirm with `jarvis --help`. If the command is not found, `uv tool update-shell`

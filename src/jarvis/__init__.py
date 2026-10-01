@@ -14,6 +14,6 @@ Nothing else opens a socket. ``test_egress_chokepoint_runtime`` asserts it by
 patching ``socket.socket.connect`` and running a full pipeline pass.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = ["__version__"]

@@ -125,7 +125,8 @@ def _import_identity(data: dict[str, Any], put: Any, report: ImportReport) -> No
     report.warnings.append(
         "Tax residence is not in the master CV and was not inferred from your "
         "citizenship or address — it changes every remote-role calculation. "
-        "Set it in Settings before the first run."
+        "Tell Claude (\"my tax residence is …\") before the first run; it is saved "
+        "as identity.tax_residence."
     )
 
     right_to_work = mobility.get("right_to_work_without_sponsorship") or []
